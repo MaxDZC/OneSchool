@@ -6,6 +6,12 @@ if(!isset($_SESSION['name'])) {
     header("location: ../index.php");
 }
 
+$gradeT=mysqli_query($mysqli, "SELECT grade_level FORM STUDENT WHERE student_id = '".$_SESSION['id']."' ");
+$grade=mysqli_fetch_array($gradeT);
+
+$tuitionT=mysqli_query($mysqli, "SELECT * FROM TUITION WHERE active = 1 AND (grade = ".$grade[0]." OR grade IS NULL)");
+$historyT=mysqli_query($mysqli, "SELECT * FROM tuition_history WHERE student_id = '".$_SESSION['id']."' AND active = 1 ORDER BY date_paid");
+
 ?>
 <!DOCTYPE html>
 <html lang="en" ng-app>
@@ -53,29 +59,44 @@ if(!isset($_SESSION['name'])) {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>Tuition Fee</td>
-                      <td>Php 5000.00</td>
-                      <td>7/20/2016</td>
-                      <td>Leni de Castro</td>
-                    </tr>
-                    <tr>
-                      <td>Medical Fee</td>
-                      <td>Php 400.00</td>
-                      <td>8/11/2016</td>
-                      <td>Walter Disney</td>
-                    </tr>
-                    <tr>
+                  <?php
+                    $sum = 0;
+                    while($history=mysqli_fetch_array($historyT)) {
+                      $name=$history[6]." ";
+                      if($history[7]) { $name.= $history[7]." "; }
+                      $name.=$history[8];
+                      $sum += $history[3];
+                      echo "
+                      <tr>
+                        <td>
+                          ".$history[4]."
+                        </td>
+                        <td>
+                          Php ".number_format($history[3], 2)."
+                        </td>
+                        <td>
+                          ".date("m/d/Y", strtotime($history[5]))."
+                        </td>
+                        <td>
+                          ".$name."
+                        </td>
+                      </tr>";
+                    }
+
+                    echo 
+                    "<tr>
                       <td></td>
                       <td></td>
                       <td><b>Total Paid Amount: </b></td>
-                      <td>Php 5400.00</td>
-                    </tr>
+                      <td>Php ".number_format($sum, 2)."</td>
+                    </tr>";
+
+                  ?>
                   </tbody>
                 </table>
               </div>
             </div>
-            
+
             <div class="card">
               <div class="card-header">
                  <i class="icon-notebook"></i> Tuition Fees
