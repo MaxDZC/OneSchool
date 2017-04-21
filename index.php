@@ -1,22 +1,26 @@
 <?php
 session_start();
 
-if(1 == 0) {
+if(1 == 1) {
 
-if(!isset($_SESSION['id'])) {
-  $loc = "login.php";
-} else if($_SESSION['id'][0] == 'S') {
-  $loc = "welcome.php";
-} else if($_SESSION['id'][0] == 'T') {
-  $loc = "welcome-teacher.php";
-} else if($_SESSION['id'][0] == 'A') {
-  $loc = "welcome-admin.php";
-}
+  if(!isset($_SESSION['id'])) {
+    $loc = "login.php";
+  } else if($_SESSION['id'][0] == 'S') {
+    $loc = "student/welcome.php";
+  } else if($_SESSION['id'][0] == 'T') {
+    $loc = "welcome-teacher.php";
+  } else if($_SESSION['id'][0] == 'A') {
+    $loc = "welcome-admin.php";
+  }
 
-header("location: ".$loc);
+  header("location: ".$loc);
 }
 ?>
 
+
+
+
+<!-- NG-Practice -->
 <!DOCTYPE html>
 
 <html lang="en-us" ng-app="myApp" ng-init="greet='Hello World!'; amount = 10000; roi = 10.5; duration = 10; myArr = [100, 200]; person = { firstName: 'Steve', lastName: 'Jobs'}">

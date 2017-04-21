@@ -13,24 +13,21 @@
   <link href="css/font-awesome.min.css" rel="stylesheet">
   <link href="css/simple-line-icons.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
-
-
-  <script src="bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="bower_components/tether/dist/js/tether.min.js"></script>
-  <script src="js/angular.js"></script>
-
 </head>
 
 <body class="app flex-row align-items-center">
   <div class="container">
     <div class="row justify-content-center"> <!-- To make it center -->
       <div class="col-md-8">
+        <center>
+          <img src="img/LogoT.png" style="height: 50px;background-color: transparent;"><br><br>
+        </center>
         <div class="card-group mb-0">
           
           <div class="card p-2">
             <div class="card-block">
 
-              <form action="validate.php" method="post">
+              <form action="database/validate.php" method="post">
                 <h1>Login Form</h1>
                 <p class="text-muted">Sign In to your account</p>
                 <div class="input-group mb-1">
@@ -55,10 +52,14 @@
 
           <div class="card card-inverse card-primary py-3 hidden-md-down" style="width:44%">
             <div class="card-block text-center">
-
-                <center><img src="img/UpdatedLogo.png" style="background-color: transparent;"></center>
-                <h3><i class="icon-note"></i> <i class="icon-wallet"></i>  <i class="icon-chart"></i> <i class="icon-book-open"></i></h3>
-
+              <br>
+              <p><h3>Re-imagine Education</h3></p>
+              <h3>
+                <i class="icon-note"></i>
+                <i class="icon-wallet"></i>
+                <i class="icon-chart"></i>
+                <i class="icon-book-open"></i>
+              </h3>
             </div>
           </div>
 
@@ -66,5 +67,8 @@
       </div>
     </div>
   </div> <!-- Close container -->
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/tether/dist/js/tether.min.js"></script>
+<script src="js/angular.js"></script>
 </body>
 </html>
