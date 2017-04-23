@@ -2,15 +2,15 @@
 session_start();
 include("../database/sql_connect.php");
 
-if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'S'){
+if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'T'){
   header("location: ../index.php");
 }
 
-$selectT=mysqli_query($mysqli,"SELECT * FROM student WHERE student_id='".$_SESSION['id']."'");
+$selectT=mysqli_query($mysqli,"SELECT * FROM teacher WHERE teacher_id='".$_SESSION['id']."'");
 $select=mysqli_fetch_array($selectT);
 
 $name=$select[2]." "; 
-if($select[3]) { $name.=$select[3][0].". "; }
+if($select[3]) { $name.= $select[3][0].". "; } 
 $name.=$select[4];
 
 ?>
@@ -66,22 +66,24 @@ $name.=$select[4];
 
     td:nth-child(1) {
       width: 40%;
-      padding-right:50px;
-      padding-left:50px;
+      padding-right: 50px;
+      padding-left: 50px;
     }
+
     td:nth-child(2) {
       width: 60%;
     }
     </style>
 </head>
+
 <body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
   <header class="app-header navbar">
-    <?php include("header.php"); ?>
+    <?php include("header-teacher.php"); ?>
   </header>
 
   <div class="app-body">
-    <?php include("sidebar.php") ?>   
-    <main class="main">
+    <?php include("sidebar-teacher.php") ?>
+    <main class="main">     
       <ol class="breadcrumb">
         <li class="breadcrumb-item">Profile</li>
         <li class="breadcrumb-item active">View</li>
@@ -92,11 +94,11 @@ $name.=$select[4];
           <div class="col-lg-12">
             <div class="card card-default">
               <div class="card-header">
-                  Student Details
+                  Teacher Details
               </div>
 
-              <!-- Profile Picture part -->
-              <form id="form" method="POST" action="updateProfPic.php" enctype="multipart/form-data">
+              <!-- Prof pic -->
+              <form id="form" method="POST" action="updateProfPic-teacher.php" enctype="multipart/form-data">
                 <div class="fileinputs" style="margin: 2%">
                   <input type="file" name="photo" id="file" class="file" accept="image/*">
                   <div class="fakefile">
@@ -109,49 +111,41 @@ $name.=$select[4];
 
               <center>
                 <img src="
-                  <?php if($select[11]) { echo $select[11]; } else { echo "img/student.png"; } ?>" 
-                  class="img-avatar" width="20%" style="padding: 2%">
+                <?php if($select[8]) { echo $select[8]; } else { echo "img/lecture-1.png"; } ?>" 
+                class="img-avatar" width="20%" style="padding: 2%">
               </center>
 
               <div class="card-block">
                 <table class="table table-striped table-bordered">
                   <tr>
-                    <td>Name: </td>
+                    <td>Name: </td> 
                     <td><?php echo $name; ?></td>
                   </tr>
                   <tr>
-                    <td>ID Number: </td>
-                    <td><?php echo $select[0];?></td>
+                    <td>ID: </td> 
+                    <td><?php echo $select[0]; ?></td>
                   </tr>
                   <tr>
-                    <td>Address: </td>
-                    <td><?php echo $select[7]; ?></td>
-                  </tr>
-                  <tr>
-                    <td>Gender: </td>
-                    <td><?php echo $select[8]; ?></td>
-                  </tr>
-                  <tr>
-                    <td>Current Grade: </td>
+                    <td> Email: </td>
                     <td><?php echo $select[6]; ?></td>
                   </tr>
                   <tr>
-                    <td>Section: </td>
-                    <td><?php if($select[10]){ echo $select[5]; } else { echo "Unassigned"; } ?></td>
+                    <td> Educational Attainment: </td> 
+                    <td><?php echo $select[9]; ?></td>
                   </tr>
                 </table>
-              </div>   
-            </div>
+              </div>
+            </div>   
           </div>
         </div>
-      </div>
+      </div> <!-- end container -->
 
     </main>
   </div>
 
   <script src="../js/angular.js"></script>
   <script src="../bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="../bower_components/tether/dist/js/tether.min.js"></script>   
+  <script src="../bower_components/tether/dist/js/tether.min.js"></script>  
   <script src="../bower_components/pace/pace.min.js"></script>
   <script src="../bower_components/chart.js/dist/Chart.min.js"></script>
   <script src="../js/jquery.js"></script>

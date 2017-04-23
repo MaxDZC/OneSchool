@@ -2,7 +2,7 @@
 session_start();
 include("../database/sql_connect.php");
 
-if(!isset($_SESSION['name'])) {
+if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'S') {
   header("location: ../index.php");
 }
 

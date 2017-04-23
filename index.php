@@ -8,9 +8,9 @@ if(1 == 1) {
   } else if($_SESSION['id'][0] == 'S') {
     $loc = "student/welcome.php";
   } else if($_SESSION['id'][0] == 'T') {
-    $loc = "welcome-teacher.php";
+    $loc = "teacher/welcome-teacher.php";
   } else if($_SESSION['id'][0] == 'A') {
-    $loc = "welcome-admin.php";
+    $loc = "admin/welcome-admin.php";
   }
 
   header("location: ".$loc);

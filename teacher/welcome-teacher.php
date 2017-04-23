@@ -2,22 +2,17 @@
 session_start();
 include("../database/sql_connect.php");
 
-if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'S'){
-    header("location: ../index.php");
+if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'T'){
+  header("location: ../index.php");
 }
 
-$table=mysqli_query($mysqli,"SELECT grade_level FROM STUDENT WHERE student_id = '".$_SESSION["id"]."'");
-$row=mysqli_fetch_row($table);
-$level=$row[0] - 1;
-$check=pow(2, $level);
-
-$ann=mysqli_query($mysqli, "SELECT * FROM ANNOUNCEMENT WHERE (visibility & ".$check.") != 0 AND active = 1");
+$ann=mysqli_query($mysqli, "SELECT * FROM ANNOUNCEMENT WHERE active = 1");
+$num=mysqli_num_rows($ann);
 
 ?>
 <!DOCTYPE html>
 <html lang="en" ng-app>
 <head>
-
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -32,13 +27,13 @@ $ann=mysqli_query($mysqli, "SELECT * FROM ANNOUNCEMENT WHERE (visibility & ".$ch
 
 <body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
   <header class="app-header navbar">
-    <?php include("header.php"); ?>
+    <?php include("header-teacher.php"); ?>
   </header>
 
   <div class="app-body">
-    <?php include("sidebar.php"); ?>
+    <?php include("sidebar-teacher.php") ?>
     <main class="main">
-        
+
       <ol class="breadcrumb">
         <li class="breadcrumb-item">Home</li>
         <li class="breadcrumb-item active">Welcome</li>
@@ -52,63 +47,59 @@ $ann=mysqli_query($mysqli, "SELECT * FROM ANNOUNCEMENT WHERE (visibility & ".$ch
                 <i class="fa fa-align-justify"></i> News and Announcements
               </div>
               <div class="card-block">
+              <form action="viewAnn-T.php" method="POST">
+                <input type="hidden" name="ann_id" value="" required>
+
                 <?php
-                  $num=mysqli_num_rows($ann);
                   if($num != 0){
                     echo 
-                    '<form action="viewAnn.php" method="POST">
-                    <input type="hidden" name="ann_id" value="-1">';
-                    echo 
-                    '<table class="table table-bordered table-striped table-condensed">
+                    "<table class='table table-bordered table-striped table-condensed'>
                       <thead>
                         <tr>
                           <th>Title</th>
                           <th>Date Published</th>
                         </tr>
                       </thead>
-                      <tbody>';
+                      <tbody>";
 
                     while($anns=mysqli_fetch_row($ann)){
-                        $date=date("Y/m/d", strtotime($anns[4]));
-                        echo 
-                        '<tr>
-                          <td>
-                            <a href="javascript:formSubmit('.$anns[0].');">
-                              '.$anns[2].'
-                            </a>
-                          </td>
-                          <td>
-                            '.$date.'
-                          </td>
-                        </tr>';
+                      $date=date("Y/m/d", strtotime($anns[4]));
+                      echo 
+                      "<tr>
+                        <td>
+                         <a href='javascript:formSubmit(".$anns[0].")'>".$anns[2]."</a>
+                        </td>
+                        <td>".$date."</td>
+                      </tr>";
                     }
 
-                    echo '</tbody>';
+                    echo "</tbody>";
                   } else {
                     echo "There are no announcements to display!";
                   }
 
                   if($num != 0){
-                    echo "</table></form>";
+                    echo "</table>";
                   }
                 ?>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </div> <!-- end container -->
 
-  </div> <!-- close body -->
+    </main>
+  </div>
 
   <script src="../js/angular.js"></script>
   <script src="../bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="../bower_components/tether/dist/js/tether.min.js"></script>     
+  <script src="../bower_components/tether/dist/js/tether.min.js"></script>
   <script src="../bower_components/pace/pace.min.js"></script>
+  <script src="../bower_components/chart.js/dist/Chart.min.js"></script>
   <script src="../js/jquery.js"></script>
   <script src="../js/bootstrap.min.js"></script>
   <script src="../js/app.js"></script>
-  
+
   <script> 
     function formSubmit(ann_id) 
     {

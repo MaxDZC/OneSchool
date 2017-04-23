@@ -2,7 +2,7 @@
 session_start();
 include("../database/sql_connect.php");
 
-if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'S'){
+if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'T'){
   header("location: ../index.php");
 }
 
@@ -38,17 +38,17 @@ $adminName.=$admin[4];
 
 <body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
   <header class="app-header navbar">
-    <?php include("header.php"); ?>
+    <?php include("header-teacher.php"); ?>
   </header>
 
   <div class="app-body">
-    <?php include("sidebar.php"); ?>
+    <?php include("sidebar-teacher.php"); ?>
     <main class="main">
         
       <ol class="breadcrumb">
         <li class="breadcrumb-item">Home</li>
         <li class="breadcrumb-item">
-          <a href="welcome.php">
+          <a href="welcome-teacher.php">
             Welcome
           </a>
         </li>
@@ -70,16 +70,17 @@ $adminName.=$admin[4];
                   $date=date("l, F j, Y", strtotime($ann[4]));
                   $date.=" "."at"." ";
                   $date.=date("h:i A", strtotime($ann[4]));
-                  echo '<p>'.$ann[3].'</p>
-                        <hr>
-                        <img src="../'.$admin[5].'" class="img-avatar" height="25px">
-                        <br>
-                        <span>
-                          <em>
-                            Posted by '.$adminName.'<br>
-                            Posted on '.$date.'
-                          </em>
-                        </span>';
+                  echo 
+                  "<p>".$ann[3]."</p>
+                  <hr>
+                  <img src='../".$admin[5]."' class='img-avatar' height='25px'>
+                  <br>
+                  <span>
+                    <em>
+                      Posted by ".$adminName."<br>
+                      Posted on ".$date."
+                    </em>
+                  </span>";
                 ?>
               </div>
             </div>

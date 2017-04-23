@@ -2,14 +2,15 @@
 session_start();
 include("../database/sql_connect.php");
 
-if(!isset($_SESSION['name'])) {
+if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'S') {
     header("location: ../index.php");
 }
 
-$gradeT=mysqli_query($mysqli, "SELECT grade_level FORM STUDENT WHERE student_id = '".$_SESSION['id']."' ");
+$gradeT=mysqli_query($mysqli, "SELECT grade_level FROM STUDENT WHERE student_id = '".$_SESSION['id']."' ");
 $grade=mysqli_fetch_array($gradeT);
 
-$tuitionT=mysqli_query($mysqli, "SELECT * FROM TUITION WHERE active = 1 AND (grade = ".$grade[0]." OR grade IS NULL)");
+$tuitionMiscT=mysqli_query($mysqli, "SELECT * FROM tuition WHERE grade IS NULL and active = 1");
+$tuitionT=mysqli_query($mysqli, "SELECT * FROM tuition WHERE grade = ".$grade[0]." AND active = 1 ORDER BY grade");
 $historyT=mysqli_query($mysqli, "SELECT * FROM tuition_history WHERE student_id = '".$_SESSION['id']."' AND active = 1 ORDER BY date_paid");
 
 ?>
@@ -60,12 +61,12 @@ $historyT=mysqli_query($mysqli, "SELECT * FROM tuition_history WHERE student_id 
                   </thead>
                   <tbody>
                   <?php
-                    $sum = 0;
+                    $sumPaid = 0;
                     while($history=mysqli_fetch_array($historyT)) {
                       $name=$history[6]." ";
                       if($history[7]) { $name.= $history[7]." "; }
                       $name.=$history[8];
-                      $sum += $history[3];
+                      $sumPaid += $history[3];
                       echo "
                       <tr>
                         <td>
@@ -88,7 +89,7 @@ $historyT=mysqli_query($mysqli, "SELECT * FROM tuition_history WHERE student_id 
                       <td></td>
                       <td></td>
                       <td><b>Total Paid Amount: </b></td>
-                      <td>Php ".number_format($sum, 2)."</td>
+                      <td>Php ".number_format($sumPaid, 2)."</td>
                     </tr>";
 
                   ?>
@@ -110,70 +111,74 @@ $historyT=mysqli_query($mysqli, "SELECT * FROM tuition_history WHERE student_id 
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>First Grading</td>
-                      <td>Php 5000.00</td>
-                    </tr>
-                    <tr>
-                      <td>Second Grading</td>
-                      <td>Php 5000.00</td>
-                    </tr>
-                    <tr>
-                      <td>Third Grading</td>
-                      <td>Php 5000.00</td>
-                    </tr>
-                    <tr>
-                      <td>Fourth Grading</td>
-                      <td>Php 5000.00</td>
-                    </tr>
+                  <?php
+                    $sumToPay=0;
+                    while($tuition = mysqli_fetch_array($tuitionT)) {
+                      $sumToPay+=$tuition[4];
+                      switch($tuition[2]) {
+                        case 1: $grading="First"; break;
+                        case 2: $grading="Second"; break;
+                        case 3: $grading="Third"; break;
+                        case 4: $grading="Fourth";
+                      }
+                      echo 
+                      "<tr>
+                        <td>".$grading." Grading</td>
+                        <td>Php ".number_format($tuition[4], 2)."</td>
+                      </tr>";
+                    }
+                  ?>
                   </tbody>
                 </table>
               </div>
             </div>
 
-              <div class="card">
-                  <div class="card-header">
-                       <i class="icon-notebook"></i> Other Fees
-                  </div>
-                  <div class="card-block">
-                          <table class="table table-bordered table-striped table-condensed">
-                              <thead>
-                                  <tr>
-                                      <th>Type</th>
-                                      <th>Payment Amount</th>
-                                  </tr>
-                              </thead>
-                              <tbody>
-                                  <tr>
-                                      <td>School Bus</td>
-                                      <td>Php 500.00</td>
-                                  </tr>
-                                  <tr>
-                                      <td>Library Fee</td>
-                                      <td>Php 300.00</td>
-                                  </tr>
-                                   <tr>
-                                      <td>Medical Fee</td>
-                                      <td>Php 400.00</td>
-                                  </tr>
-                                  <tr>
-                                      <td>Online System Fee</td>
-                                      <td>Php 100.00</td>
-                                  </tr>
-                                  <tr>
-                                      <td><b>Current Balance: </b></td>
-                                      <td>Php 15900.00</td>
-                                  </tr>
-                              </tbody>
-                          </table>
-                      </div>
+            <div class="card">
+              <div class="card-header">
+                <i class="icon-notebook"></i> Other Fees
               </div>
+              <div class="card-block">
+                <table class="table table-bordered table-striped table-condensed">
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Payment Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <?php
+                    while($tuitionMisc=mysqli_fetch_array($tuitionMiscT)) {
+                      $sumToPay+=$tuitionMisc[4];
+                      echo 
+                      "<tr>
+                        <td>".$tuitionMisc[1]."</td>
+                        <td>Php ".number_format($tuitionMisc[4], 2)."</td>
+                      </tr>";
+                    }
+                  ?>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <table class="table table-striped table-condensed">
+                  <tr>
+                    <td><h3>Current Balance: </h3></td>
+                    <td><h3>Php <?php echo number_format($sumToPay - $sumPaid, 2); ?></h3></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
     </main>
   </div>
 
+  <script src="../js/angular.js"></script>
   <script src="../bower_components/jquery/dist/jquery.min.js"></script>
   <script src="../bower_components/tether/dist/js/tether.min.js"></script>   
   <script src="../bower_components/pace/pace.min.js"></script>
@@ -181,7 +186,5 @@ $historyT=mysqli_query($mysqli, "SELECT * FROM tuition_history WHERE student_id 
   <script src="../js/jquery.js"></script>
   <script src="../js/bootstrap.min.js"></script>
   <script src="../js/app.js"></script>
-  <script src="../bower_components/chart.js/dist/Chart.min.js"></script>
-  <script src="../js/piechart.js"></script>
 </body>
 </html>

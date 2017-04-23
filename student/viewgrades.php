@@ -2,7 +2,7 @@
 session_start();
 include("../database/sql_connect.php");
 
-if(!isset($_SESSION['name'])){
+if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'S'){
   header("location: ../index.php");
 }
 
@@ -16,8 +16,6 @@ $result=mysqli_query($mysqli, "SELECT grade_level FROM STUDENT WHERE student_id 
 $gradelvl=mysqli_fetch_array($result);
 
 $table=mysqli_query($mysqli,"SELECT * FROM grades WHERE student_id='".$_SESSION['id']."' AND grade_level =".$level." AND active = 1");
-
-
 
 ?>
 <!DOCTYPE html>

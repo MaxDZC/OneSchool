@@ -30,7 +30,7 @@
                     </div>
 
                     <a class="dropdown-item" href="admin-profile.php"><i class="fa fa-user"></i> Profile</a>
-                    <a class="dropdown-item" href="index.php"><i class="fa fa-lock"></i> Logout</a>
+                    <a class="dropdown-item" href="logout.php"><i class="fa fa-lock"></i> Logout</a>
                 </div>
             </li>
         </ul>
