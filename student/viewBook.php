@@ -84,7 +84,7 @@ $book=mysqli_fetch_array($ulibT);
                 </p>
 
                 <p>
-                  <form action="../<?php echo $book[5]; ?>">
+                  <form target="_blank" action="../<?php echo $book[5]; ?>">
                     <button type="submit" class="btn btn-danger"><i class="fa fa-dot-circle-o"></i> View</button>
                   </form>
                 </p>

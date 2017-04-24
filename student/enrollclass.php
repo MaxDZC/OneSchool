@@ -225,10 +225,6 @@ $num=mysqli_num_rows($secT);
           <div class="card">
 
             <div class="card-block">
-              <form action="enrollstud.php" method="POST">
-                <input type="hidden" name="secid" value="" required>
-              </form>
-
               <center>
                 <a href='unenrollAll.php'>
                   <button data-toggle='modal' data-target='#unenroll' class='bt btn-md btn-success'>

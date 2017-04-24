@@ -1,7 +1,7 @@
 <?php
 
 // MySQL
-$dsn = "mysql:dbname=oneschool;host=localhost;port=3306";
+$dsn = "mysql:dbname=oneschooldb;host=localhost;port=3306";
 $db_user = "root";
 $db_pass = "";
 $db_tick = "`";

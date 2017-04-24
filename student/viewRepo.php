@@ -9,7 +9,7 @@ if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'S'){
 $tId= $_POST['teacher'];
 $subj_id = $_POST['subjid'];
 
-$repoT=mysqli_query($mysqli, "SELECT * FROM repository WHERE teacher_id = '".$tId."' AND active = 1 ORDER BY item_id");
+$repoT=mysqli_query($mysqli, "SELECT * FROM repository WHERE teacher_id = '".$tId."' AND file IS NOT NULL AND active = 1 ORDER BY item_id");
 $nameT=mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName FROM teacher WHERE teacher_id = '".$tId."' AND active = 1");
 $subjT=mysqli_query($mysqli, "SELECT subject FROM subjects WHERE subj_id = ".$subj_id." AND active = 1");
 

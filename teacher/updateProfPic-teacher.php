@@ -2,6 +2,10 @@
 session_start();
 require ("../database/sql_connect.php");
 
+if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'T'){
+  header("location: ../index.php");
+}
+
 $id=$_SESSION['id'];
 $dest = "img/profile/";
 

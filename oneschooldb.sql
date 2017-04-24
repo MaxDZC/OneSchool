@@ -130,7 +130,7 @@ CREATE TABLE `class` (
   CONSTRAINT `class_ibfk_2` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`teacher_id`),
   CONSTRAINT `class_ibfk_3` FOREIGN KEY (`sched_id`) REFERENCES `schedule` (`sched_id`),
   CONSTRAINT `class_ibfk_4` FOREIGN KEY (`sec_id`) REFERENCES `subsection` (`sec_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -139,8 +139,139 @@ CREATE TABLE `class` (
 
 LOCK TABLES `class` WRITE;
 /*!40000 ALTER TABLE `class` DISABLE KEYS */;
-INSERT INTO `class` VALUES (2,1,'T14103150',1,1),(3,2,'T14103150',1,1);
+INSERT INTO `class` VALUES (2,1,'T14103150',1,1),(3,2,'T14103150',1,1),(40,8,'T14103150',2,1);
 /*!40000 ALTER TABLE `class` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `dhx_data`
+--
+
+DROP TABLE IF EXISTS `dhx_data`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `dhx_data` (
+  `sheetid` varchar(255) NOT NULL,
+  `columnid` int(11) DEFAULT NULL,
+  `rowid` int(11) DEFAULT NULL,
+  `data` varchar(255) DEFAULT NULL,
+  `style` varchar(255) DEFAULT NULL,
+  `parsed` varchar(255) DEFAULT NULL,
+  `calc` varchar(255) DEFAULT NULL,
+  UNIQUE KEY `sheetid` (`sheetid`,`columnid`,`rowid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dhx_data`
+--
+
+LOCK TABLES `dhx_data` WRITE;
+/*!40000 ALTER TABLE `dhx_data` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dhx_data` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `dhx_header`
+--
+
+DROP TABLE IF EXISTS `dhx_header`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `dhx_header` (
+  `sheetid` varchar(255) DEFAULT NULL,
+  `columnid` int(11) DEFAULT NULL,
+  `label` varchar(255) DEFAULT NULL,
+  `width` int(11) DEFAULT NULL,
+  UNIQUE KEY `sheetid` (`sheetid`,`columnid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dhx_header`
+--
+
+LOCK TABLES `dhx_header` WRITE;
+/*!40000 ALTER TABLE `dhx_header` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dhx_header` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `dhx_sheet`
+--
+
+DROP TABLE IF EXISTS `dhx_sheet`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `dhx_sheet` (
+  `sheetid` varchar(255) NOT NULL,
+  `userid` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `key` varchar(255) DEFAULT NULL,
+  `cfg` varchar(512) DEFAULT NULL,
+  UNIQUE KEY `sheetid` (`sheetid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dhx_sheet`
+--
+
+LOCK TABLES `dhx_sheet` WRITE;
+/*!40000 ALTER TABLE `dhx_sheet` DISABLE KEYS */;
+INSERT INTO `dhx_sheet` VALUES ('demo_sheet',NULL,NULL,'any_key',NULL),('1',NULL,NULL,NULL,NULL);
+/*!40000 ALTER TABLE `dhx_sheet` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `dhx_triggers`
+--
+
+DROP TABLE IF EXISTS `dhx_triggers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `dhx_triggers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sheetid` varchar(255) DEFAULT NULL,
+  `trigger` varchar(10) DEFAULT NULL,
+  `source` varchar(10) DEFAULT NULL,
+  UNIQUE KEY `id` (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dhx_triggers`
+--
+
+LOCK TABLES `dhx_triggers` WRITE;
+/*!40000 ALTER TABLE `dhx_triggers` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dhx_triggers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `dhx_user`
+--
+
+DROP TABLE IF EXISTS `dhx_user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `dhx_user` (
+  `userid` int(11) NOT NULL AUTO_INCREMENT,
+  `apikey` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `secret` varchar(64) DEFAULT NULL,
+  `pass` varchar(64) DEFAULT NULL,
+  UNIQUE KEY `userid` (`userid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dhx_user`
+--
+
+LOCK TABLES `dhx_user` WRITE;
+/*!40000 ALTER TABLE `dhx_user` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dhx_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -369,14 +500,15 @@ CREATE TABLE `repository` (
   `item_id` int(11) NOT NULL AUTO_INCREMENT,
   `teacher_id` varchar(32) NOT NULL,
   `subj_id` int(11) NOT NULL,
-  `file` varchar(256) NOT NULL,
+  `file` varchar(256) DEFAULT NULL,
+  `date_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `active` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`item_id`),
   KEY `teacher_id` (`teacher_id`),
   KEY `subj_id` (`subj_id`),
   CONSTRAINT `repository_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`teacher_id`),
   CONSTRAINT `repository_ibfk_2` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -385,7 +517,7 @@ CREATE TABLE `repository` (
 
 LOCK TABLES `repository` WRITE;
 /*!40000 ALTER TABLE `repository` DISABLE KEYS */;
-INSERT INTO `repository` VALUES (1,'T14103150',5,'repos/T14103150/5/Physics.jpg',1),(2,'T17043224',2,'repos/T17043224/2/Filipino.jpg',1);
+INSERT INTO `repository` VALUES (2,'T17043224',2,'repos/T17043224/2/Filipino.jpg','2017-04-24 06:54:25',1),(4,'T17043224',2,NULL,'2017-04-24 08:09:55',1),(7,'T14103150',5,NULL,'2017-04-24 08:55:41',1),(8,'T14103150',5,'repos/T14103150/5/Physics.jpg','2017-04-24 08:56:22',1),(16,'T14103150',6,NULL,'2017-04-24 09:16:51',1),(18,'T14103150',5,'repos/T14103150/5/14101334.jpg','2017-04-24 10:42:39',1),(20,'T14103150',6,'repos/T14103150/6/Avatar.jpg','2017-04-24 10:50:41',1),(24,'T14103150',7,NULL,'2017-04-24 12:49:04',1);
 /*!40000 ALTER TABLE `repository` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -403,11 +535,14 @@ CREATE TABLE `schedule` (
   `time_start` time NOT NULL,
   `time_end` time NOT NULL,
   `days` int(11) NOT NULL,
+  `sec_id` int(11) NOT NULL,
   `active` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`sched_id`),
   KEY `subj_id` (`subj_id`),
   KEY `subj_id_2` (`subj_id`),
-  CONSTRAINT `schedule_ibfk_1` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`)
+  KEY `sec_id` (`sec_id`),
+  CONSTRAINT `schedule_ibfk_1` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`),
+  CONSTRAINT `schedule_ibfk_2` FOREIGN KEY (`sec_id`) REFERENCES `subsection` (`sec_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -417,7 +552,7 @@ CREATE TABLE `schedule` (
 
 LOCK TABLES `schedule` WRITE;
 /*!40000 ALTER TABLE `schedule` DISABLE KEYS */;
-INSERT INTO `schedule` VALUES (1,7,10,'07:30:00','08:30:00',21,1),(2,6,10,'08:30:00','09:30:00',21,1),(3,1,5,'07:30:00','08:30:00',21,1),(4,2,5,'07:30:00','08:30:00',10,1),(5,3,5,'08:30:00','09:30:00',21,1),(6,4,5,'08:30:00','09:30:00',10,1),(7,5,5,'09:30:00','10:30:00',21,1),(8,6,5,'09:30:00','10:30:00',10,1),(9,7,5,'10:30:00','11:30:00',21,1),(10,8,5,'10:30:00','11:30:00',10,1),(11,9,5,'01:30:00','02:30:00',21,1),(12,10,5,'01:30:00','02:30:00',10,1),(13,11,5,'02:30:00','03:30:00',21,1),(14,12,5,'02:30:00','03:30:00',10,1);
+INSERT INTO `schedule` VALUES (1,7,10,'07:30:00','08:30:00',21,1,1),(2,6,10,'08:30:00','09:30:00',21,1,1),(3,1,5,'07:30:00','08:30:00',21,2,1),(4,2,5,'07:30:00','08:30:00',10,2,1),(5,3,5,'08:30:00','09:30:00',21,2,1),(6,4,5,'08:30:00','09:30:00',10,2,1),(7,5,5,'09:30:00','10:30:00',21,2,1),(8,6,5,'09:30:00','10:30:00',10,2,1),(9,7,5,'10:30:00','11:30:00',21,2,1),(10,8,5,'10:30:00','11:30:00',10,2,1),(11,9,5,'01:30:00','02:30:00',21,2,1),(12,10,5,'01:30:00','02:30:00',10,2,1),(13,11,5,'02:30:00','03:30:00',21,2,1),(14,12,5,'02:30:00','03:30:00',10,2,1);
 /*!40000 ALTER TABLE `schedule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -712,4 +847,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-04-23 18:57:28
+-- Dump completed on 2017-04-24 21:05:23

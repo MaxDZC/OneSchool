@@ -18,8 +18,6 @@ while($tClass=mysqli_fetch_array($takenClass)) {
   array_push($taken, $tClass[0]);
 }
 
-echo implode(", ", $taken);
-
 ?>
 <!DOCTYPE html>
 <html lang="en" ng-app>
@@ -56,7 +54,12 @@ echo implode(", ", $taken);
                 <div class="card-header">
                     Current Schedule
                 </div>
-                <div class="card-block">
+                <div class="card-block" id="print">
+
+                  <form action="delSched.php" method="POST">
+                    <input type="hidden" name="sched_id" value="" required>
+                  </form>
+
                   <table class="table table-bordered table-striped table-condensed">
                     <thead>
                       <tr>
@@ -91,22 +94,37 @@ echo implode(", ", $taken);
                         $secT=mysqli_query($mysqli, "SELECT section_name FROM subsection WHERE sec_id =".$row[3]."");
                         $sec=mysqli_fetch_array($secT);
 
+                        $checkT=mysqli_query($mysqli, "SELECT * FROM section WHERE class_id =".$row[0]." ");
+                        if(mysqli_num_rows($checkT) != 0) {
+                          $stats = false;
+                        } else {
+                          $stats = true;
+                        }
+
+                        $check=mysqli_num_rows($checkT);
+
                         echo 
                         "<tr>
                           <td>".$subj[0]."</td>
                           <td>".$date."</td>
                           <td>".$sec[0]."</td>
-                          <td>
-                            <a href='deleteSched.php?id=".$row[0]."'><button class='btn btn-sm btn-danger'><i class='icon-minus'></i> Delete</button>
-                          </a>
-                        </tr>";   
+                          <td>";
+
+                          if($stats) {
+                            echo "
+                            <a href='javascript: delSched(".$row[1].")'><button class='btn btn-sm btn-danger'><i class='icon-minus'></i> Delete</button></a>";
+                          } else {
+                            echo "There are ".$check." student(s) enrolled";
+                          }
+                          
+                       echo "</tr>";   
                       }
 
                     ?>
                     </tbody>
                   </table>
                   <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#addsubj"><i class="icon-plus"></i> Add</button>
-                  <button class="btn btn-sm btn-secondary"><i class="icon-doc"></i> Print</button>
+                  <a href='javascript: printSched()'><button class="btn btn-sm btn-secondary"><i class="icon-doc"></i> Print</button></a>
                 </div>
             </div>
           </div>
@@ -126,6 +144,11 @@ echo implode(", ", $taken);
           </button>
         </div>
         <div class="modal-body">
+
+          <form action="addSched.php" method="POST">
+            <input type="hidden" name="sched_id" value="" required>
+          </form>
+
           <table class="table table-bordered table-striped table-condensed">
             <thead>
               <tr>
@@ -140,8 +163,10 @@ echo implode(", ", $taken);
               $scheds=mysqli_query($mysqli,"SELECT * FROM schedule WHERE sched_id NOT IN (".implode(", ", $taken).") AND active = 1");
               while($sched=mysqli_fetch_array($scheds)){
                 $subjT=mysqli_query($mysqli, "SELECT subject FROM subjects WHERE subj_id = ".$sched[1]." AND active = 1");
-                if(mysqli_num_rows($subjT) == 1) {
+                $secT=mysqli_query($mysqli, "SELECT section_name FROM subsection WHERE sec_id = ".$sched[6]." and active = 1");
+                if(mysqli_num_rows($subjT) == 1 && mysqli_num_rows($secT) == 1) {
                   $subj=mysqli_fetch_array($subjT);
+                  $sec=mysqli_fetch_array($secT);
 
                   $date=date("h:i A", strtotime($sched[3]))." - ".date("h:i A", strtotime($sched[4]));
                   $days= "";
@@ -160,9 +185,9 @@ echo implode(", ", $taken);
                   "<tr>
                     <td>Grade ".$sched[2]." - ".$subj[0]."</td>
                     <td>".$date."</td>
-                    <td>".$sched[4]."</td>
+                    <td>".$sec[0]."</td>
                     <td>
-                      <a href='data7.php?level=".$row[0]."&subject=".$row[1]."&sched=".$row[2]."&teach=".$_GET["name"]."'>
+                      <a href='javascript: addSched(".$sched[0].")'>
                         <button role='select' class='btn btn-sm btn-warning'>
                           <i class='icon-minus'></i> Select
                         </button>
@@ -190,7 +215,31 @@ echo implode(", ", $taken);
   <script src="../js/jquery.js"></script>
   <script src="../js/bootstrap.min.js"></script>
   <script src="../js/app.js"></script>
-  <script src="../js/views/main.js"></script>
+
+  <script>
+    style = new String('<link href="../css/style.css" rel="stylesheet">');
+    function delSched(sched_id)
+    {
+      document.forms[0].sched_id.value = sched_id;
+      document.forms[0].submit();
+    }
+
+    function addSched(sched_id)
+    {
+      document.forms[1].sched_id.value = sched_id;
+      document.forms[1].submit();
+    }
+
+    function printSched()
+    {
+      var printContents = document.getElementById("print").innerHTML;
+      var popupWin = window.open('', '_blank', 'width=1000, height=1000');
+
+      popupWin.document.open();
+      popupWin.document.write("<html><head>" + style + "</head><body>" + printContents + "</body></html>");
+      popupWin.document.close();
+    }
+  </script>
 
 </body>
 </html>

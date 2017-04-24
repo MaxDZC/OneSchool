@@ -60,6 +60,7 @@ $ulibT=mysqli_query($mysqli, "SELECT book_id, title, author, date_added from uni
         <li class="breadcrumb-item"><a href="resources.php">Visit</a></li>
         <li class="breadcrumb-item active">Universal Library</li>
       </ol>
+
       <div class="container-fluid">
         <div class="row">
           <div class="col-lg-12">
@@ -71,31 +72,32 @@ $ulibT=mysqli_query($mysqli, "SELECT book_id, title, author, date_added from uni
               <div class="card-block">
                 <form action="viewBook.php" method="POST">
                   <input type="hidden" name="book_id" value="" required>
+                </form>
 
-                  <table class="table table-bordered table-striped table-condensed">
-                    <thead>
-                      <tr>
-                        <th>Title</th>
-                        <th>Author</th>
-                        <th>Date Registered</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                      while($book=mysqli_fetch_array($ulibT)) {
-                        echo 
-                        "<tr>
-                          <td>
-                            <a href='javascript:formSubmit(".$book[0].")'>".$book[1]."</a>
-                          </td>
-                          <td>".$book[2]."</td>
-                          <td>".date("F j, Y", strtotime($book[3]))."</td>
-                        </tr>";
-                      }
+                <table class="table table-bordered table-striped table-condensed">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Author</th>
+                      <th>Date Registered</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <?php
+                    while($book=mysqli_fetch_array($ulibT)) {
+                      echo 
+                      "<tr>
+                        <td>
+                          <a href='javascript:formSubmit(".$book[0].")'>".$book[1]."</a>
+                        </td>
+                        <td>".$book[2]."</td>
+                        <td>".date("F j, Y", strtotime($book[3]))."</td>
+                      </tr>";
+                    }
 
-                    ?>
-                    </tbody>
-                  </table>
+                  ?>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>                

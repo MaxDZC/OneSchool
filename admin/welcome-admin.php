@@ -1,16 +1,16 @@
 <?php
 session_start();
-include("sql_connect.php");
+include("../database/sql_connect.php");
 
-if(!isset($_SESSION['name'])){
-    header("location: index.php");
+if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'A'){
+    header("location: ../index.php");
 }
 
 $ann=mysqli_query($mysqli, "SELECT * FROM announcement WHERE active = 1");
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app>
 
 <head>
 
@@ -25,11 +25,11 @@ $ann=mysqli_query($mysqli, "SELECT * FROM announcement WHERE active = 1");
     <title>One School - Welcome Page</title>
 
     <!-- Icons -->
-    <link href="css/font-awesome.min.css" rel="stylesheet">
-    <link href="css/simple-line-icons.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/simple-line-icons.css" rel="stylesheet">
 
     <!-- Main styles for this application -->
-    <link href="css/style.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
 
 </head>
 
@@ -107,11 +107,7 @@ $ann=mysqli_query($mysqli, "SELECT * FROM announcement WHERE active = 1");
         </main>
     </div>
 
-    <footer class="app-footer">
-
-    </footer>
-
-    <!-- Bootstrap and necessary plugins -->
+    <script src="../js/angular.js"></script>
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/tether/dist/js/tether.min.js"></script>
      
