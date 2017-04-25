@@ -26,7 +26,7 @@ $subjs=mysqli_query($mysqli, "SELECT DISTINCT subj_id FROM schedule WHERE sched_
 $subjects=mysqli_query($mysqli, "SELECT subject FROM subjects WHERE subj_id IN (".implode(", ", $repArray).")");
 $repos=mysqli_query($mysqli, "SELECT * FROM repository WHERE teacher_id = '".$id."' AND file IS NULL AND active = 1 ORDER BY subj_id");
 
-$ulibT=mysqli_query($mysqli, "SELECT book_id, title, author, date_added FROM univ_library WHERE active = 1");
+$ulibT=mysqli_query($mysqli, "SELECT book_id, title, author, date_added FROM univ_library WHERE active = 1 ORDER BY date_added desc");
 
 ?>
 
@@ -37,7 +37,7 @@ $ulibT=mysqli_query($mysqli, "SELECT book_id, title, author, date_added FROM uni
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <title>One School - Repository</title>
+  <title>One School - Universal Library</title>
 
   <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
 
@@ -81,93 +81,115 @@ $ulibT=mysqli_query($mysqli, "SELECT book_id, title, author, date_added FROM uni
         <div class="row">
           <div class="col-lg-12">
             <div class="card">
-
               <div class="card-header">
-                  <strong>Repository</strong>
+                <i class="fa fa-book"></i> Recent Books
               </div>
 
               <div class="card-block">
-
-                <form action="delRepo.php" method="POST">
-                  <input type="hidden" name="subj" required>
+                <form action="viewBook.php" method="POST">
+                  <input type="hidden" name="id" value="" required>
                 </form>
 
-                <form action="viewRepo.php" method="POST">
-                  <input type="hidden" name="subj" required>
+                <form action="delBook.php" method="POST">
+                  <input type="hidden" name="id" value="" required>
                 </form>
 
-                <table class="table table-bordered table-striped">
+                <table class="table table-bordered table-striped table-condensed">
                   <thead>
-                    <th>Subject</th>
-                    <th>Date Last Modified</th>
-                    <th>Action</th>
+                    <tr>
+                      <th>Title</th>
+                      <th>Author</th>
+                      <th>Date Registered</th>
+                      <th>Actions</th>
+                    </tr>
                   </thead>
-
                   <tbody>
                   <?php
-                    while($repo=mysqli_fetch_array($repos)) {
-                      $subject=mysqli_fetch_array($subjects);
-                      $lastDateT=mysqli_query($mysqli, "SELECT MAX(date_added) FROM REPOSITORY WHERE subj_id = ".$repo[2]." AND teacher_id = '".$id."' ");
-
-                      $lastDate=mysqli_fetch_array($lastDateT);
-
-                      $date = date("F j, Y", strtotime($lastDate[0]));
-
-                      echo
+                    while($book=mysqli_fetch_array($ulibT)) {
+                      echo 
                       "<tr>
-                        <td><i class='icon-folder'></i> ".$subject[0]."</td>
-                        <td>".$date."</td>
                         <td>
-                          <a href='javascript: viewSubmit(".$repo[2].")'>
-                            <button class='btn btn-sm btn-primary'><i class='fa fa-circle-o'></i> View</button>
-                          </a>
-
-                          <a href='javascript: delSubmit(".$repo[2].")'>
-                            <button class='btn btn-sm btn-danger'><i class='icon-minus'></i> Delete</button>
-                          </a>
+                          <a href='javascript:formSubmit(".$book[0].")'>".$book[1]."</a>
+                        </td>
+                        <td>".$book[2]."</td>
+                        <td>".date("F j, Y", strtotime($book[3]))."</td>
+                        <td>
+                          <center>
+                            <a href='javascript: delForm(".$book[0].")'>
+                              <button class='btn btn-sm btn-danger'>
+                                <span class='icon-minus'></span> Delete
+                              </button>
+                            </a>
+                          </center>
                         </td>
                       </tr>";
-
-                      $stats = true;
                     }
+
                   ?>
                   </tbody>
                 </table>
-                <button data-target="#add" data-toggle="modal" class="btn btn-sm btn-success"><i class="icon-plus"></i> Add Folder</button>
+
+                <button data-target="#addBook" data-toggle="modal" class="btn btn-sm btn-success"><i class="icon-plus"></i> Add Book</button>
+
               </div>
             </div>
-          </div>
+          </div>                
         </div>
 
       </div> <!-- end container -->
     </main>
   </div>
 
-  <div class="modal" id="add">
+  <div class="modal" id="addBook">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"><strong>Add a Folder</strong></h5>
+          <h5 class="modal-title" id="exampleModalLabel"><strong>Add a Book</strong></h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
+
         <div class="modal-body">
 
-          <form action="addFolder.php" method="POST">
+          <form action="addBook.php" method="POST" enctype="multipart/form-data" class="form-horizontal">
 
-            <select name="subject" class="form-control">
-              <option value="" selected>Choose a subject... </option>
-              <?php
-                while($subj=mysqli_fetch_array($subjs)) {
-                  $names=mysqli_query($mysqli, "SELECT subject from subjects WHERE subj_id = ".$subj[0]." ");
-                  $subjectName=mysqli_fetch_array($names);
-                  echo 
-                  "<option value=".$subj[0].">".$subjectName[0]."</option>";
-                }
-              ?>
-            </select>
+            <p style="color: red"> ** Only files in the PDF format are supported ** </p>
 
+            <div class="form-group row">
+              <label class="col-md-3 form-control-label">Book title: </label>
+              <div class="col-md-9">
+                <input class="form-control" name="title" type="text" placeholder="Enter the Name of the Book Here" required>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-3 form-control-label">Book Info: </label>   
+              <div class="col-md-9">
+                <textarea class="form-control" rows="8" name="summary" type="text" placeholder="Enter a summary or description of the book here" required></textarea>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-3 form-control-label">Author(s): </label>   
+              <div class="col-md-9">
+                <input class="form-control" name="author" type="text" placeholder="Enter the name(s) of the author(s) here" required>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-3 form-control-label">PDF: </label>    
+              <div class="col-md-9">
+                <input class="form-control" name="book" type="file" accept="application/pdf" required>
+              </div>                  
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-3 form-control-label">Book Cover: </label>
+              <div class="col-md-9">
+                <input class="form-control" name="bookCover" type="file" accept="image/*" required>
+              </div>                
+            </div>
 
             <div class="modal-footer">
               <button type="submit" class="btn btn-success"><i class="icon-plus"></i> Add</button>
@@ -175,7 +197,6 @@ $ulibT=mysqli_query($mysqli, "SELECT book_id, title, author, date_added FROM uni
             </div>
 
           </form>
-
         </div>
       </div>
     </div>
@@ -191,15 +212,15 @@ $ulibT=mysqli_query($mysqli, "SELECT book_id, title, author, date_added FROM uni
   <script src="../js/app.js"></script>
 
   <script>
-    function delSubmit(subj)
+    function formSubmit(id)
     {
-      document.forms[0].subj.value = subj;
+      document.forms[0].id.value = id;
       document.forms[0].submit();
     }
 
-    function viewSubmit(subj)
+    function delForm(id)
     {
-      document.forms[1].subj.value = subj;
+      document.forms[1].id.value = id;
       document.forms[1].submit();
     }
   </script>

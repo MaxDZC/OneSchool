@@ -2,18 +2,19 @@
 session_start();
 include("../database/sql_connect.php");
 
-if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'S'){
-  header("location: ../index.php");
+if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'T'){
+    header("location: ../index.php");
 }
 
-$ulibT=mysqli_query($mysqli, "SELECT book_id, title, author, date_added from univ_library WHERE active = 1 ORDER BY date_added desc");
+$book_id=$_POST['id'];
+
+$ulibT=mysqli_query($mysqli, "SELECT * from univ_library WHERE book_id = ".$book_id." AND active = 1");
+$book=mysqli_fetch_array($ulibT);
 
 ?>
 <!DOCTYPE html>
 <html lang="en" ng-app>
-
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -45,62 +46,65 @@ $ulibT=mysqli_query($mysqli, "SELECT book_id, title, author, date_added from uni
     </style>
 </head>
 
-
-
 <body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
   <header class="app-header navbar">
-    <?php include("header.php"); ?>
+    <?php include("header-teacher.php"); ?>
   </header>
 
   <div class="app-body">
-    <?php include("sidebar.php"); ?>
-    <main class="main">   
+    <?php include("sidebar-teacher.php"); ?>    
+    <main class="main">  
+
       <ol class="breadcrumb">
         <li class="breadcrumb-item">Learning Resources</li>
-        <li class="breadcrumb-item"><a href="resources.php">Visit</a></li>
-        <li class="breadcrumb-item active">Universal Library</li>
+        <li class="breadcrumb-item"><a href="library.php">Universal Library</a></li>
+        <li class="breadcrumb-item active">
+          <?php if(strlen($book[1]) > 10) { echo substr($book[1], 0, 10)." ... "; } else { echo $book[1]; }  ?>
+        </li>
       </ol>
 
-      <div class="container-fluid">
+      <div class="container-fluid">  
         <div class="row">
-          <div class="col-lg-12">
+          <div class="col-md-6">
             <div class="card">
+
               <div class="card-header">
-                <i class="fa fa-book"></i> Recent Books
+                <strong>Book Description</strong>
               </div>
 
               <div class="card-block">
-                <form action="viewBook.php" method="POST">
-                  <input type="hidden" name="book_id" value="" required>
-                </form>
+                <p>
+                  <h5><?php echo $book[1]; ?></h5>
+                </p>
 
-                <table class="table table-bordered table-striped table-condensed">
-                  <thead>
-                    <tr>
-                      <th>Title</th>
-                      <th>Author</th>
-                      <th>Date Registered</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  <?php
-                    while($book=mysqli_fetch_array($ulibT)) {
-                      echo 
-                      "<tr>
-                        <td>
-                          <a href='javascript:formSubmit(".$book[0].")'>".$book[1]."</a>
-                        </td>
-                        <td>".$book[2]."</td>
-                        <td>".date("F j, Y", strtotime($book[3]))."</td>
-                      </tr>";
-                    }
+                <p>
+                  <h6><em>By <?php echo $book[3]; ?></em></h6>               
+                </p>
 
-                  ?>
-                  </tbody>
-                </table>
+                <p>
+                  <form target="_blank" action="../<?php echo $book[5]; ?>">
+                    <button type="submit" class="btn btn-danger"><i class="fa fa-dot-circle-o"></i> View</button>
+                  </form>
+                </p>
+
+                <img src="../<?php echo $book[6]; ?>" width="480px">   
+
+              </div>
+
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                <strong>Summary</strong>
+              </div>
+              <div class="card-block">
+                <p><?php echo $book[2]; ?></p>
               </div>
             </div>
-          </div>                
+          </div>
+
         </div>
       </div>
 
@@ -109,18 +113,11 @@ $ulibT=mysqli_query($mysqli, "SELECT book_id, title, author, date_added from uni
 
   <script src="../js/angular.js"></script>
   <script src="../bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="../bower_components/tether/dist/js/tether.min.js"></script>   
+  <script src="../bower_components/tether/dist/js/tether.min.js"></script>
   <script src="../bower_components/pace/pace.min.js"></script>
   <script src="../bower_components/chart.js/dist/Chart.min.js"></script>
   <script src="../js/jquery.js"></script>
   <script src="../js/bootstrap.min.js"></script>
   <script src="../js/app.js"></script>
-  <script> 
-    function formSubmit(book_id) 
-    {     
-      document.forms[0].book_id.value = book_id;
-      document.forms[0].submit();
-    }
-  </script>
 </body>
 </html>

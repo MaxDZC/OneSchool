@@ -120,7 +120,7 @@ $num=mysqli_num_rows($secT);
                     </button>";
                   } else {
                     echo 
-                    "<button data-toggle='modal' data-target='#unenroll' class='bt btn-md btn-danger'>
+                    "<button data-toggle='modal' data-target='#unenroll' class='btn btn-md btn-danger'>
                       <i class='icon-minus'></i> Unenroll
                     </button>";
                   }

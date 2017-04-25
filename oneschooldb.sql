@@ -40,7 +40,7 @@ CREATE TABLE `admin` (
 
 LOCK TABLES `admin` WRITE;
 /*!40000 ALTER TABLE `admin` DISABLE KEYS */;
-INSERT INTO `admin` VALUES ('A14103150','helloworld','Arnold','','Roso','img/profile/17948663_1677979765550556_821516894_o.jpg',1);
+INSERT INTO `admin` VALUES ('A14103150','helloworld','Arnold','','Roso','img/profile/Celine 2x2.jpg',1);
 /*!40000 ALTER TABLE `admin` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -56,13 +56,13 @@ CREATE TABLE `announcement` (
   `admin_id` varchar(32) NOT NULL,
   `title` varchar(64) NOT NULL,
   `ann` text NOT NULL,
-  `timestamp` datetime NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `visibility` int(11) NOT NULL,
   `active` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`ann_id`),
   KEY `admin_id` (`admin_id`),
-  CONSTRAINT `announcement_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+  CONSTRAINT `announcement_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +71,7 @@ CREATE TABLE `announcement` (
 
 LOCK TABLES `announcement` WRITE;
 /*!40000 ALTER TABLE `announcement` DISABLE KEYS */;
-INSERT INTO `announcement` VALUES (1,'A14103150','Final Exams Just Around the Corner!','The exams are just next week! Don\'t miss them!','2017-10-05 00:00:00',528,1),(3,'A14103150','Warning: Typhoon Signal Number 3! No classes!','Lots of text','2017-07-13 20:50:50',528,1),(4,'A14103150','One School S.Y. 2017-2018 is now open!','Lots of text','2017-06-13 20:50:57',528,1),(5,'A14103150','Enrolment schedule has been posted!','Lots of text','2017-04-13 20:51:03',528,1),(6,'A14103150','Have nothing to do this summer? Apply for summer class...','Lots of text','2017-04-01 20:51:14',528,1),(7,'A14103150','Congratulations, Dear Graduates!','Lots of text','2017-03-29 20:52:00',528,1);
+INSERT INTO `announcement` VALUES (1,'A14103150','Final Exams Just Around the Corner!','The exams are just next week! Don\'t miss them!','2017-04-12 04:00:00',528,1),(4,'A14103150','One School S.Y. 2017-2018 is now open!','Lots of text','2017-04-12 04:00:00',528,1),(5,'A14103150','Enrolment schedule has been posted!','Lots of text','2017-04-13 04:51:03',528,1),(6,'A14103150','Have nothing to do this summer? Apply for summer class...','Summer class is the way to early graduation!','2017-04-01 04:51:14',528,1),(7,'A14103150','Congratulations, Dear Graduates!','Lots of text','2017-03-29 04:52:00',528,1),(8,'A14103150','Down for maintenance!','Greetings!\r\n\r\nWe here at One School care much about your growth and education, so we have decided to improve upon our system! \r\n\r\nThe code will be more dynamic, modular and faster than ever before! Please bear with us while we fix the server lag!\r\n\r\nYours truly,\r\nThe President','2017-04-25 05:53:38',1009,1);
 /*!40000 ALTER TABLE `announcement` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -94,8 +94,8 @@ CREATE TABLE `assign` (
   PRIMARY KEY (`ass_id`),
   KEY `stud_id` (`stud_id`),
   KEY `subj_id` (`subj_id`),
-  CONSTRAINT `assign_ibfk_1` FOREIGN KEY (`stud_id`) REFERENCES `student` (`student_id`),
-  CONSTRAINT `assign_ibfk_2` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`)
+  CONSTRAINT `assign_ibfk_1` FOREIGN KEY (`stud_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `assign_ibfk_2` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -127,10 +127,10 @@ CREATE TABLE `class` (
   KEY `sched_id` (`sched_id`),
   KEY `teacher_id` (`teacher_id`),
   KEY `sec_id` (`sec_id`),
-  CONSTRAINT `class_ibfk_2` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`teacher_id`),
-  CONSTRAINT `class_ibfk_3` FOREIGN KEY (`sched_id`) REFERENCES `schedule` (`sched_id`),
-  CONSTRAINT `class_ibfk_4` FOREIGN KEY (`sec_id`) REFERENCES `subsection` (`sec_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=latin1;
+  CONSTRAINT `class_ibfk_2` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `class_ibfk_3` FOREIGN KEY (`sched_id`) REFERENCES `schedule` (`sched_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `class_ibfk_4` FOREIGN KEY (`sec_id`) REFERENCES `subsection` (`sec_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -294,8 +294,8 @@ CREATE TABLE `exam` (
   KEY `stud_id` (`stud_id`,`subj_id`),
   KEY `stud_id_2` (`stud_id`),
   KEY `subj_id` (`subj_id`),
-  CONSTRAINT `exam_ibfk_1` FOREIGN KEY (`stud_id`) REFERENCES `student` (`student_id`),
-  CONSTRAINT `exam_ibfk_2` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`)
+  CONSTRAINT `exam_ibfk_1` FOREIGN KEY (`stud_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `exam_ibfk_2` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -364,10 +364,10 @@ CREATE TABLE `gradebreakdown` (
   KEY `teacher_id` (`teacher_id`,`student_id`),
   KEY `subj_id` (`subj_id`),
   KEY `student_id` (`student_id`),
-  CONSTRAINT `gradebreakdown_ibfk_4` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`),
-  CONSTRAINT `gradebreakdown_ibfk_5` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`teacher_id`),
-  CONSTRAINT `gradebreakdown_ibfk_6` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`),
-  CONSTRAINT `gradebreakdown_ibfk_7` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`)
+  CONSTRAINT `gradebreakdown_ibfk_4` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `gradebreakdown_ibfk_5` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `gradebreakdown_ibfk_6` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `gradebreakdown_ibfk_7` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=841 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -405,9 +405,9 @@ CREATE TABLE `grades` (
   KEY `student_id_2` (`student_id`),
   KEY `subj_id_2` (`subj_id`),
   KEY `teacher_id_2` (`teacher_id`),
-  CONSTRAINT `grades_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`),
-  CONSTRAINT `grades_ibfk_2` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`),
-  CONSTRAINT `grades_ibfk_3` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`teacher_id`)
+  CONSTRAINT `grades_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `grades_ibfk_2` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `grades_ibfk_3` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -440,8 +440,8 @@ CREATE TABLE `project` (
   PRIMARY KEY (`proj_id`),
   KEY `stud_id` (`stud_id`),
   KEY `subj_id` (`subj_id`),
-  CONSTRAINT `project_ibfk_1` FOREIGN KEY (`stud_id`) REFERENCES `student` (`student_id`),
-  CONSTRAINT `project_ibfk_2` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`)
+  CONSTRAINT `project_ibfk_1` FOREIGN KEY (`stud_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `project_ibfk_2` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -474,8 +474,8 @@ CREATE TABLE `quiz` (
   PRIMARY KEY (`quiz_id`),
   KEY `stud_id` (`stud_id`),
   KEY `subj_id` (`subj_id`),
-  CONSTRAINT `quiz_ibfk_1` FOREIGN KEY (`stud_id`) REFERENCES `student` (`student_id`),
-  CONSTRAINT `quiz_ibfk_2` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`)
+  CONSTRAINT `quiz_ibfk_1` FOREIGN KEY (`stud_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `quiz_ibfk_2` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=8201 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -506,8 +506,8 @@ CREATE TABLE `repository` (
   PRIMARY KEY (`item_id`),
   KEY `teacher_id` (`teacher_id`),
   KEY `subj_id` (`subj_id`),
-  CONSTRAINT `repository_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`teacher_id`),
-  CONSTRAINT `repository_ibfk_2` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`)
+  CONSTRAINT `repository_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `repository_ibfk_2` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -541,9 +541,9 @@ CREATE TABLE `schedule` (
   KEY `subj_id` (`subj_id`),
   KEY `subj_id_2` (`subj_id`),
   KEY `sec_id` (`sec_id`),
-  CONSTRAINT `schedule_ibfk_1` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`),
-  CONSTRAINT `schedule_ibfk_2` FOREIGN KEY (`sec_id`) REFERENCES `subsection` (`sec_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=latin1;
+  CONSTRAINT `schedule_ibfk_1` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `schedule_ibfk_2` FOREIGN KEY (`sec_id`) REFERENCES `subsection` (`sec_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -575,8 +575,8 @@ CREATE TABLE `seatwork` (
   PRIMARY KEY (`sw_id`),
   KEY `stud_id` (`stud_id`),
   KEY `subj_id` (`subj_id`),
-  CONSTRAINT `seatwork_ibfk_1` FOREIGN KEY (`stud_id`) REFERENCES `student` (`student_id`),
-  CONSTRAINT `seatwork_ibfk_2` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`)
+  CONSTRAINT `seatwork_ibfk_1` FOREIGN KEY (`stud_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `seatwork_ibfk_2` FOREIGN KEY (`subj_id`) REFERENCES `subjects` (`subj_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -604,8 +604,8 @@ CREATE TABLE `section` (
   PRIMARY KEY (`class_id`,`student_id`),
   KEY `class_id` (`class_id`),
   KEY `student_id` (`student_id`),
-  CONSTRAINT `section_ibfk_1` FOREIGN KEY (`class_id`) REFERENCES `class` (`class_id`),
-  CONSTRAINT `section_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`)
+  CONSTRAINT `section_ibfk_1` FOREIGN KEY (`class_id`) REFERENCES `class` (`class_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `section_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -652,7 +652,7 @@ CREATE TABLE `student` (
 
 LOCK TABLES `student` WRITE;
 /*!40000 ALTER TABLE `student` DISABLE KEYS */;
-INSERT INTO `student` VALUES ('S14101334','123','Jean','','Go','Unity',5,'Makati, Manila','Female','2000-03-16',2,'img/profile/mah boy.jpg',1),('S14103150','helloworld','Rexes','John','Murro','Bravery',10,'Lapu-lapu','Male','0000-00-00',1,'img/profile/14101334.jpg',1),('S17047982','123','Max','Delante','Zuorba',NULL,5,'Nasipit, Talamban, Cebu','Male','2004-05-05',NULL,'img/profile/17580034_774428689399246_669402885_n.png',1);
+INSERT INTO `student` VALUES ('S14101334','123','Jean','','Go','Unity',5,'Makati, Manila','Female','2000-03-16',2,'img/profile/favicon.png',1),('S14103150','helloworld','Master Rexes','John Rexes','Murro','Bravery',10,'Lapu-lapu Street','Male','1995-05-04',1,'img/profile/14101334.jpg',1),('S17040995','123','Johnny','','Hello',NULL,3,'The World','Male','0004-02-05',NULL,NULL,1),('S17047982','123','Max','Delante','Zuorba',NULL,5,'Nasipit, Talamban, Cebu','Male','2004-05-05',NULL,'img/profile/17580034_774428689399246_669402885_n.png',1);
 /*!40000 ALTER TABLE `student` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -697,8 +697,8 @@ CREATE TABLE `subsection` (
   `active` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`sec_id`),
   KEY `section_adviser` (`section_adviser`),
-  CONSTRAINT `subsection_ibfk_1` FOREIGN KEY (`section_adviser`) REFERENCES `teacher` (`teacher_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+  CONSTRAINT `subsection_ibfk_1` FOREIGN KEY (`section_adviser`) REFERENCES `teacher` (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -707,7 +707,7 @@ CREATE TABLE `subsection` (
 
 LOCK TABLES `subsection` WRITE;
 /*!40000 ALTER TABLE `subsection` DISABLE KEYS */;
-INSERT INTO `subsection` VALUES (1,'T14103150',10,'Bravery',30,1),(2,'T14103150',5,'Unity',30,1),(3,'T14103150',5,'Integrity',45,1),(4,'T14103150',5,'Honesty',45,1);
+INSERT INTO `subsection` VALUES (1,'T14103150',10,'Bravery',30,1),(2,'T14103150',5,'Unity',30,1),(3,'T14103150',5,'Integrity',45,1),(4,'T14103150',5,'Honesty',45,1),(5,'T17041279',4,'Sincerity',50,1);
 /*!40000 ALTER TABLE `subsection` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -740,7 +740,7 @@ CREATE TABLE `teacher` (
 
 LOCK TABLES `teacher` WRITE;
 /*!40000 ALTER TABLE `teacher` DISABLE KEYS */;
-INSERT INTO `teacher` VALUES ('T14103150','123','Louie','Jay','Rivas','Lapu-Lapu','lojay@gmail.com','1990-04-09','img/profile/Avatar.jpg','Doctorate',1),('T17043224','123','John','','Hopkins','Lapu-lapu','jopkins@yahoo.com','1989-02-25',NULL,'Bachelor',1);
+INSERT INTO `teacher` VALUES ('T14103150','123','Louie Five','Jay One','Rivas Two','Lapu-Lapu Mountains','helllojay@gmail.com','1993-06-06','img/profile/17741260_283969292023971_1509585091_n.png','High School',1),('T17041279','123','Joshua','Oh Canada','Velasco','Near Sunny Hills, Talamban','jvsimpson@lookout.com','1985-01-01','img/profile/13200027.jpg','Doctorate',1),('T17043224','123','John','','Hopkins','Lapu-lapu','jopkins@yahoo.com','1989-02-25',NULL,'Bachelor',1);
 /*!40000 ALTER TABLE `teacher` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -793,8 +793,8 @@ CREATE TABLE `tuition_history` (
   PRIMARY KEY (`t_hist_id`),
   KEY `student_id` (`student_id`),
   KEY `tuition_id` (`tuition_id`),
-  CONSTRAINT `tuition_history_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`),
-  CONSTRAINT `tuition_history_ibfk_2` FOREIGN KEY (`tuition_id`) REFERENCES `tuition` (`tuition_id`)
+  CONSTRAINT `tuition_history_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `tuition_history_ibfk_2` FOREIGN KEY (`tuition_id`) REFERENCES `tuition` (`tuition_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -825,7 +825,7 @@ CREATE TABLE `univ_library` (
   `book_cover` varchar(128) NOT NULL,
   `active` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`book_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -834,7 +834,7 @@ CREATE TABLE `univ_library` (
 
 LOCK TABLES `univ_library` WRITE;
 /*!40000 ALTER TABLE `univ_library` DISABLE KEYS */;
-INSERT INTO `univ_library` VALUES (1,'Data Structures & Algorithms in Java','Data Structures and Algorithms in Java provides an introduction to data structures and algorithms, including their design, analysis and implementation.','Michael T. Goodrich, Roberto Tamassia, Michael H. Goldwasser','2017-04-01 08:00:00','ulib/book/Data Structures and Algorithms in Java, 6th Edition, 2014.pdf','ulib/bookCover/datastruct.png',1),(2,'Fundamentals of Logic Design 7th Edition','After studying this text, student should be able to apply switching theory to the solution of logic design problems. They will learn both the basic theory of switching circuits and how to apply it.','Charles H. Roth, Jr.','2017-04-02 08:00:00','ulib/book/Roth Fundamentals of Logic Design 7th c2014 txtbk.pdf','ulib/bookCover/roth.png',1),(3,'System Analysis and Design','System Analysis and Design is an exciting, active field in which analysis continually learn new techniques and approaches to develop systems more effectively and efficiently. However, there is a core set of skills that all analysts need to know no matter what approach or methodology is used.','Dennis, Wixom, Roth','2017-04-02 08:00:00','ulib/book/Systemanalysisanddesign/png','ulib/bookCover/sad.png',1);
+INSERT INTO `univ_library` VALUES (1,'Data Structures & Algorithms in Java','Data Structures and Algorithms in Java provides an introduction to data structures and algorithms, including their design, analysis and implementation.','Michael T. Goodrich, Roberto Tamassia, Michael H. Goldwasser','2017-04-01 08:00:00','ulib/book/Data Structures and Algorithms in Java, 6th Edition, 2014.pdf','ulib/bookCover/datastruct.png',1),(2,'Fundamentals of Logic Design 7th Edition','After studying this text, student should be able to apply switching theory to the solution of logic design problems. They will learn both the basic theory of switching circuits and how to apply it.','Charles H. Roth, Jr.','2017-04-02 08:00:00','ulib/book/Roth Fundamentals of Logic Design 7th c2014 txtbk.pdf','ulib/bookCover/roth.png',1),(3,'System Analysis and Design','System Analysis and Design is an exciting, active field in which analysis continually learn new techniques and approaches to develop systems more effectively and efficiently. However, there is a core set of skills that all analysts need to know no matter what approach or methodology is used.','Dennis, Wixom, Roth','2017-04-02 08:00:00','ulib/book/systemanalysisanddesign.pdf','ulib/bookCover/sad.png',1);
 /*!40000 ALTER TABLE `univ_library` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -847,4 +847,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-04-24 21:05:23
+-- Dump completed on 2017-04-25 22:06:31

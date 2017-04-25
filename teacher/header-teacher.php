@@ -1,4 +1,5 @@
 <button class="navbar-toggler mobile-sidebar-toggler hidden-lg-up" type="button">☰</button>
+
 <img src="../img/Logo.png" width="180px" height="30px" style="margin-left: 1%; margin-top: 1%">
 <ul class="nav navbar-nav ml-auto">
   <li class="nav-item dropdown">
@@ -9,9 +10,9 @@
         $ava=mysqli_fetch_array($avaT);
 
         if($ava[0]) {
-            echo $ava[0];
+          echo $ava[0];
         } else {
-            echo "img/lecture-1.png";
+          echo "img/lecture-1.png";
         }        
       ?>" 
       class="img-avatar">

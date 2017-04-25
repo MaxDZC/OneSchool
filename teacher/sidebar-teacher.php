@@ -53,9 +53,16 @@
 
       <li class="nav-item nav-dropdown">
         <a class="nav-link nav-dropdown-toggle" href="#"><i class="icon-note"></i>Management</a>
+
         <ul class="nav-dropdown-items">
           <li class="nav-item">
             <a class="nav-link" href="repository.php"><i class="icon-arrow-right-circle"></i>Repository</a>
+          </li>
+        </ul>
+
+        <ul class="nav-dropdown-items">
+          <li class="nav-item">
+            <a class="nav-link" href="library.php"><i class="icon-arrow-right-circle"></i>Universal Library</a>
           </li>
         </ul>
       </li>

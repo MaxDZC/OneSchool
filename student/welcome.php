@@ -11,7 +11,7 @@ $row=mysqli_fetch_row($table);
 $level=$row[0] - 1;
 $check=pow(2, $level);
 
-$ann=mysqli_query($mysqli, "SELECT * FROM ANNOUNCEMENT WHERE (visibility & ".$check.") != 0 AND active = 1");
+$ann=mysqli_query($mysqli, "SELECT * FROM ANNOUNCEMENT WHERE (visibility & ".$check.") != 0 AND active = 1 ORDER BY timestamp desc");
 
 ?>
 <!DOCTYPE html>

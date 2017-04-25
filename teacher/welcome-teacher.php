@@ -6,7 +6,7 @@ if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'T'){
   header("location: ../index.php");
 }
 
-$ann=mysqli_query($mysqli, "SELECT * FROM ANNOUNCEMENT WHERE active = 1");
+$ann=mysqli_query($mysqli, "SELECT * FROM ANNOUNCEMENT WHERE active = 1 ORDER BY timestamp desc");
 $num=mysqli_num_rows($ann);
 
 ?>
@@ -47,8 +47,9 @@ $num=mysqli_num_rows($ann);
                 <i class="fa fa-align-justify"></i> News and Announcements
               </div>
               <div class="card-block">
-              <form action="viewAnn-T.php" method="POST">
-                <input type="hidden" name="ann_id" value="" required>
+                <form action="viewAnn-T.php" method="POST">
+                  <input type="hidden" name="ann_id" value="" required>
+                </form>
 
                 <?php
                   if($num != 0){
