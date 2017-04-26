@@ -6,6 +6,9 @@ if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'A'){
   header("location: ../index.php");
 }
 
+$schedT=mysqli_query($mysqli, "SELECT * FROM schedule WHERE active = 1 ORDER BY time_start, grade_level");
+$subjList=mysqli_query($mysqli, "SELECT * FROM subjects WHERE active = 1 ORDER BY subj_id");
+
 ?>
 <!DOCTYPE html>
 <html lang="en" ng-app>
@@ -36,265 +39,203 @@ if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'A'){
         <li class="breadcrumb-item active">Schedule Plot</li>
       </ol>
 
-            <div class="container-fluid">
-                <div class="row col-lg-16 card">
-                    <div class="card-header">
-                        <strong>Created Schedule</strong>
-                    </div>
-                    <div class="card-block">
-                        <table class="table table-striped table-bordered">
-                            <thead>
-                                <th>Grade Level</th>
-                                <th>Subject</th>
-                                <th>Time</th>
-                                <th>Teacher</th>
-                                <th>Action</th>
-                            </thead>
-                            <tbody>
-                                <?php 
-                                  $table=mysqli_query($mysqli, "SELECT * FROM schedule WHERE active = 1");
-                                  while($row=mysqli_fetch_array($table)){
-                                    $subjT=mysqli_query($mysqli, "SELECT subject FROM subjects WHERE subj_id = ".$row[1]."");
-                                    $subj=mysqli_fetch_array($subjT);
+      <div class="container-fluid">
 
-                                    $date=date("h:i A", strtotime($row[3]))." - ".date("h:i A", strtotime($row[4]));
-                                    $days= "";
+        <div class="row col-lg-16 card">
 
-                                    if($row[5] & 1){
-                                        $days = "M";
-                                    }
+          <div class="card-header">
+            <strong>Created Schedules</strong>
+          </div>
 
-                                    if($row[5] & 2){
-                                        $days .= "T";
-                                    }                                                
+          <div class="card-block">
 
-                                    if($row[5] & 4){
-                                        $days .= "W";
-                                    }
+            <form action="editSched.php" method="POST">
+              <input type="hidden" name="id" value="" required>
+            </form>
 
-                                    if($row[5] & 8){
-                                        $days .= "TH";
-                                    }  
-                                    
-                                    if($row[5] & 16){
-                                        $days .= "F";
-                                    }
+            <form action="editSched.php">
+              <input type="hidden" name="id" value="" required>
+            </form>
 
-                                    if($row[5] & 32){
-                                        $days .= "Sat";
-                                    } 
+            <table class="table table-striped table-bordered">
+              <thead>
+                <th>Grade Level</th>
+                <th>Subject</th>
+                <th>Time</th>
+                <th>Teacher</th>
+                <th>Action</th>
+              </thead>
+              <tbody>
+              <?php
+                while($row=mysqli_fetch_array($schedT)) {
+                  $subjT=mysqli_query($mysqli, "SELECT subject FROM subjects WHERE subj_id = ".$row[1]." AND ACTIVE = 1");
+                  $classT=mysqli_query($mysqli, "SELECT teacher_id FROM class WHERE sched_id = ".$row[0]." and active = 1");
 
-                                    if($row[5] & 64){
-                                        $days .= "Sun";
-                                    }
+                  if(mysqli_num_rows($subjT) == 1) {
+                    $subj=mysqli_fetch_array($subjT);
 
-                                    $date .= " ".$days;
+                    $date=date("h:i A", strtotime($row[3]))." - ".date("h:i A", strtotime($row[4]));
+                    $days= "";
 
-                                    $classT=mysqli_query($mysqli, "SELECT teacher_id FROM class WHERE sched_id = ".$row[0]." and active = 1");
-                                    $class=mysqli_fetch_array($classT);
+                    if($row[5] & 1){ $days = "M"; }
+                    if($row[5] & 2){ $days .= "T"; }                                                
+                    if($row[5] & 4){ $days .= "W"; }
+                    if($row[5] & 8){ $days .= "TH"; }  
+                    if($row[5] & 16){ $days .= "F"; }
+                    if($row[5] & 32){ $days .= "Sat"; } 
+                    if($row[5] & 64){ $days .= "Sun"; }
 
-                                    $teacherT=mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName FROM teacher WHERE teacher_id = '".$class[0]."'");
+                    $date .= " ".$days;
 
-                                    if(mysqli_num_rows($teacherT) == 1) {
-                                      $teacher=mysqli_fetch_array($teacherT);
-                                      $name = $teacher[2].", ".$teacher[0];
-                                      if($teacher[1]) {
-                                        $name .= " ".$teacher[1][0].".";
-                                      }
-                                    } else {
-                                      $name = "No Teacher Yet";
-                                    }
+                    
+                    $class=mysqli_fetch_array($classT);
 
-                                    echo "<tr>
-                                            <td>
-                                              <center>".$row[2]."</center>
-                                            </td>
-                                            <td>
-                                              ".$subj[0]."
-                                            </td>
-                                            <td>
-                                              ".$date."
-                                            </td>
-                                            <td>
-                                              ".$name."
-                                            </td>
-                                            <td>
-                                              <button class='btn btn-sm btn-success'>
-                                                <i class='icon-check'></i> Update
-                                              </button> 
+                    $teacherT=mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName FROM teacher WHERE teacher_id = '".$class[0]."' AND ACTIVE = 1");
 
-                                              <a href='data11.php?level=".$row[0]."&subj=".$row[1]."&sched=".$row[2]."'>
-                                              <button class='btn btn-sm btn-danger'>
-                                                <i class='icon-minus'></i> Delete
-                                              </button></a>
-                                            </td>
-                                            </tr>";
-                                  }
-                              ?>
-                            </tbody>
-                        </table>
-                        <button class="btn btn-md btn-primary" data-toggle="modal" data-target="#addstud"><i class="icon-plus"></i> Add Schedule</button>                        
-                    </div>
-                </div>                
-            </div>
-            <!-- /.conainer-fluid -->
-        </main>
+                    if(mysqli_num_rows($teacherT) == 1) {
+                      $teacher=mysqli_fetch_array($teacherT);
+                      $name = $teacher[2].", ".$teacher[0];
+                      if($teacher[1]) {
+                        $name .= " ".$teacher[1][0].".";
+                      }
+                    } else {
+                      $name = "No Teacher Yet";
+                    }
+
+                    echo "
+                    <tr>
+                      <td><center>".$row[2]."</center></td>
+                      <td>".$subj[0]."</td>
+                      <td>".$date."</td>
+                      <td>".$name."</td>
+                      <td>
+                        <center>
+                          <a href='javascript: formEdit(".$row[0].")'>
+                            <button class='btn btn-sm btn-success'>
+                              <i class='icon-check'></i> Edit
+                            </button> 
+                          </a>
+                          <a href='data11.php?level=".$row[0]."&subj=".$row[1]."&sched=".$row[2]."'>
+                        <button class='btn btn-sm btn-danger'>
+                          <i class='icon-minus'></i> Delete
+                        </button></a>
+                        </center>
+                      </td>
+                      </tr>";
+                  }
+                }
+              ?>
+              </tbody>
+            </table>
+
+            <button class="btn btn-md btn-primary" data-toggle="modal" data-target="#addstud"><i class="icon-plus"></i> Add Schedule</button>                        
+          </div>
+        </div>                
+      
+      </div> <!-- Container End -->    
+    </main>
+  </div>
         
-<div class="modal" id="addstud" role="dialog">
-  <div class="modal-dialog modal-md">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel"><strong>Schedule Maker</strong></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-          <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                                <div class="card-block">
-                                    <form action="data4.php" method="post" enctype="multipart/form-data" class="form-horizontal ">
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Grade Level</label>
-                                            <div class="col-md-9">
-                                                <select class="form-control" id="gradelvl" name="gradelvl">
-                                                <option value='0'>GRADE LEVEL</option>
-                                                <option>Grade 1</option>
-                                                <option>Grade 2</option>
-                                                <option>Grade 3</option>
-                                                <option>Grade 4</option>
-                                                <option>Grade 5</option>
-                                                <option>Grade 6</option>
-                                                <option>Grade 7</option>
-                                                <option>Grade 8</option>
-                                                <option>Grade 9</option>
-                                                <option>Grade 10</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="text-input">Subject ID</label>
-                                            <div class="col-md-9">
-                                                <select class="form-control" id="subjid" name="subjid">
-                                        <option value='0'>SUBJECT</option>
-                                        <option>Mother Tongue</option>
-                                        <option>Filipino</option>
-                                        <option>English</option>
-                                        <option>Mathematics</option>
-                                        <option>Science</option>
-                                        <option>Araling Panlipunan</option>
-                                        <option>Edukasyon sa Pagkatao</option>
-                                        <option>Music</option>
-                                        <option>Arts</option>
-                                        <option>Physical Education</option>
-                                        <option>Health</option>
-                                        <option>Edukasyong Pantahanan at Pangkabuhayan</option>
-                                    </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-md-3 form-control-label" for="password-input">Time</label>
-                                            <div class="col-md-4">
-                                                <select class="form-control" id="stime" name="stime" size="2" onchange="month(this.value)">
-                                                    <option value='0'>HH:MM</option>
-                                                    <option>7:30 AM</option>
-                                                    <option>8:00 AM</option>
-                                                    <option>8:30 AM</option>
-                                                    <option>9:00 AM</option>
-                                                    <option>9:30 AM</option>
-                                                    <option>10:00 AM</option>
-                                                    <option>10:30 AM</option>
-                                                    <option>11:00 AM</option>
-                                                    <option>11:30 AM</option>
-                                                    <option>12:00 PM</option>
-                                                    <option>12:30 PM</option>
-                                                    <option>1:00 PM</option>
-                                                    <option>1:30 PM</option>
-                                                    <option>2:00 PM</option>
-                                                    <option>2:30 PM</option>
-                                                    <option>3:00 PM</option>
-                                                    <option>3:30 AM</option>
-                                                    <option>4:00 PM</option>
-                                                    <option>4:30 PM</option>
-                                                    <option>5:00 PM</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <select class="form-control" name="etime" id="etime" size="2">
-                                                    <option value='0'>HH:MM</option>
-                                                    <option>7:30 AM</option>
-                                                    <option>8:00 AM</option>
-                                                    <option>8:30 AM</option>
-                                                    <option>9:00 AM</option>
-                                                    <option>9:30 AM</option>
-                                                    <option>10:00 AM</option>
-                                                    <option>10:30 AM</option>
-                                                    <option>11:00 AM</option>
-                                                    <option>11:30 AM</option>
-                                                    <option>12:00 PM</option>
-                                                    <option>12:30 PM</option>
-                                                    <option>1:00 PM</option>
-                                                    <option>1:30 PM</option>
-                                                    <option>2:00 PM</option>
-                                                    <option>2:30 PM</option>
-                                                    <option>3:00 PM</option>
-                                                    <option>3:30 AM</option>
-                                                    <option>4:00 PM</option>
-                                                    <option>4:30 PM</option>
-                                                    <option>5:00 PM</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    <div class="card-footer">
-                                    <button onsubmit="validate()" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Submit</button>
-                                    </div>
-                                    </form>
-                                </div>
+  <div class="modal" id="addstud" role="dialog">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
 
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel"><strong>Schedule Maker</strong></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card">
+
+                <div class="card-block">
+
+                  <form action="insertSched.php" onsubmit="return validate();" method="POST" class="form-horizontal">
+
+                    <div class="form-group row">
+                        <label class="col-md-3 form-control-label">Grade Level</label>
+                        <div class="col-md-9">
+                          <select name="grade" class="form-control" required>
+                            <option value="">Select Grade Level...</option>
+                            <option ng-repeat="i in [1,2,3,4,5,6,7,8,9,10]" value="{{i}}">Grade {{i}}</option>
+                          </select>
+                        </div>
                     </div>
-                </div>        
+
+                    <div class="form-group row">
+                      <label class="col-md-3 form-control-label">Subject</label>
+                      <div class="col-md-9">
+                        <select name="subj_id" class="form-control" required>
+                          <option value="">Select Subject...</option>
+                          <?php
+                            while($subj=mysqli_fetch_array($subjList)) {
+                              echo "
+                              <option value='".$subj[0]."' >".$subj[1]."</option>";
+                            }
+                          ?>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <label class="col-md-3 form-control-label">Time Start</label>
+                      <div class="col-md-4">
+                        <input type="time" name="time_start"  required>
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <label class="col-md-3 form-control-label">Time End</label>
+                      <div class="col-md-4">
+                        <input type="time" name="time_end"  required>
+                      </div>
+                    </div>
+
+                    On what days? <br>
+                    <div class="form-group row">
+                      <span class="col-md-6">
+                        <input type="checkbox" id="mon" name="0" value="0"> Monday
+                      </span>
+                      <span class="col-md-6">
+                        <input type="checkbox" id="tue" name="1" value="1"> Tuesday
+                      </span>
+                      <span class="col-md-6">
+                        <input type="checkbox" id="wed" name="2" value="2"> Wednesday
+                      </span>
+                      <span class="col-md-6">
+                        <input type="checkbox" id="thu" name="3" value="3"> Thursday
+                      </span>
+                      <span class="col-md-6">
+                        <input type="checkbox" id="fri" name="4" value="4"> Friday
+                      </span>
+                      <span class="col-md-6">
+                        <input type="checkbox" id="sat" name="5" value="5"> Saturday
+                      </span>
+                      <span class="col-md-6">
+                        <input type="checkbox" id="sun" name="6" value="6"> Sunday
+                      </span>
+                    </div>
+
+                    <div class="card-footer">
+                      <button class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Submit</button>
+                    </div>
+
+                  </form>
+
+                </div>
+
+              </div> <!-- Card Close -->
+            </div>        
+          </div>
+        </div> <!-- Modal Body -->
+      
       </div>
     </div>
   </div>
-</div>
-
-</div>
-
-     
-    <script type="text/javascript">
-        function validate(){
-
-        }
-
-
-        var select=document.getElementById('dd');
-
-
-        function month(value){
-            switch(value){
-                case '0': select.innerHTML="<option>DD</option>";
-                          break;
-                case '1':
-                case '3':
-                case '5':
-                case '7':
-                case '8':
-                case '10':
-                case '12': select.innerHTML="<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option><option>31</option>";
-                    break;
-                case '2': select.innerHTML="<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option>";
-                    break;
-                default: select.innerHTML="<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option>";
-                    break;
-
-            }
-            return value;
-        }
-    </script>
-
-
-    </div>
 
   <script src="../js/angular.js"></script>
   <script src="../bower_components/jquery/dist/jquery.min.js"></script>
@@ -304,6 +245,35 @@ if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'A'){
   <script src="../js/jquery.js"></script>
   <script src="../js/bootstrap.min.js"></script>
   <script src="../js/app.js"></script>
+
+  <script>
+    function formEdit(id)
+    {
+      document.forms[0].id.value = id;
+      document.forms[0].submit();
+    }
+
+
+    function validate()
+    {
+      mon = document.getElementById('mon').checked;
+      tue = document.getElementById('tue').checked;
+      wed = document.getElementById('wed').checked;
+      thu = document.getElementById('thu').checked;
+      fri = document.getElementById('fri').checked;
+      sat = document.getElementById('sat').checked;
+      sun = document.getElementById('sun').checked;
+
+      ts = document.forms[2].time_start.value;
+      te = document.forms[2].time_end.value;
+
+      if((mon || tue || wed || thu || fri || sat || sun) && ts < te) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  </script>
 
 </body>
 </html>

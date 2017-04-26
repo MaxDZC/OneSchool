@@ -10,23 +10,23 @@
 
         <ul class="nav-dropdown-items">
           <li class="nav-item">
-            <a class="nav-link" href="createstud.php"><i class="icon-arrow-right-circle"></i>Create Student</a>
+            <a class="nav-link" href="createstud.php"><i class="icon-arrow-right-circle"></i>Manage Students</a>
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="createteach.php"><i class="icon-arrow-right-circle"></i>Create Teacher</a>
+            <a class="nav-link" href="createteach.php"><i class="icon-arrow-right-circle"></i>Manage Teachers</a>
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="createclass.php"><i class="icon-arrow-right-circle"></i>Create Class</a>
+            <a class="nav-link" href="createclass.php"><i class="icon-arrow-right-circle"></i>Manage Classes</a>
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="createsched.php"><i class="icon-arrow-right-circle"></i>Create Schedule</a>
+            <a class="nav-link" href="createsched.php"><i class="icon-arrow-right-circle"></i>Manage Schedules</a>
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="createcat.php"><i class="icon-arrow-right-circle"></i>Create Subject</a>
+            <a class="nav-link" href="createcat.php"><i class="icon-arrow-right-circle"></i>Manage Subjects</a>
           </li>
         </ul>    
       </li>

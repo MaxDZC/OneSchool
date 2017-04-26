@@ -6,7 +6,7 @@ if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'A'){
   header("location: ../index.php");
 }
 
-$table=mysqli_query($mysqli,"SELECT * FROM student WHERE active = 1");
+$table=mysqli_query($mysqli,"SELECT * FROM student WHERE active = 1 ORDER BY student_id");
 
 ?>
 <!DOCTYPE html>

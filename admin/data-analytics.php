@@ -8,19 +8,19 @@ if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'A'){
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app>
 
 <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>One School - School Data</title>
 
-    <title>One School - School Data</title>
+  <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
 
-    <!-- Icons -->
-    <link href="../css/font-awesome.min.css" rel="stylesheet">
-    <link href="../css/simple-line-icons.css" rel="stylesheet">
-    <link href="../css/style.css" rel="stylesheet">
+  <link href="../css/font-awesome.min.css" rel="stylesheet">
+  <link href="../css/simple-line-icons.css" rel="stylesheet">
+  <link href="../css/style.css" rel="stylesheet">
 
 </head>
 
@@ -222,9 +222,10 @@ if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'A'){
                                     </thead>
                                     <tbody>
                                         <?php 
-                                            $table=mysqli_query($mysqli,"SELECT * FROM student WHERE active = 1");
+                                            $table=mysqli_query($mysqli,"SELECT * FROM student WHERE active = 1 ORDER BY student_id");
                                             while($row=mysqli_fetch_array($table)){
-                                                $name=$row[4].", ".$row[2]." ".$row[3][0].".";
+                                                $name=$row[4].", ".$row[2];
+                                                if($row[3]) { $name.= " ".$row[3][0]."."; }
                                                 echo "<tr><td>".$row[0]."</td><td>".$name."</td>
                                                 <td>".$row[6]."</td>
                                                     <td><a href='analytics-1.php' target='_blank'><button class='btn btn-sm btn-primary'><i class='fa fa-circle-o'></i> View</button></a></td></tr>";
@@ -251,131 +252,127 @@ if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'A'){
   <script src="../js/jquery.js"></script>
   <script src="../js/bootstrap.min.js"></script>
   <script src="../js/app.js"></script>
+
+  <script>
+
+  $(document).ready(function() {
+      
+      var options = {
+          legend: {
+              position: "bottom",
+              labels: {
+                  padding: 20
+              }
+          }
+      };
+      var ctx = $("#pie");
+          
+          // data
+      var colors = getRandomColors();
+      var data = {
+          labels: [
+              "Mother Tongue",
+              "Filipino",
+              "English",
+              "Mathematics",
+              "Science",
+              "Araling Panlipunan",
+              "Edukasyon sa Pagpakatao",
+              "Music",
+              "Arts",
+              "Physical Education",
+              "Health",
+              "Edukasyong Pantahanan at Pangkabuhayan"
+          ],
+          datasets: [
+              {
+                  data:[9, 9, 35, 9, 15, 9, 9, 1, 1, 1, 1, 1],
+                  backgroundColor: [
+                      colors[0],
+                      colors[1],
+                      colors[2],
+                      colors[3],
+                      colors[4],
+                      colors[5],
+                      colors[6],
+                      colors[7],
+                      colors[8],
+                      colors[9],
+                      colors[10],
+                      colors[11]
+                  ],
+                  hoverBackgroundColor: [
+                      colors[0],
+                      colors[1],
+                      colors[2],
+                      colors[3],
+                      colors[4],
+                      colors[5],
+                      colors[6],
+                      colors[7],
+                      colors[8],
+                      colors[9],
+                      colors[10],
+                      colors[11]
+                  ]
+              }]
+
+      };
+
+      function getRandomColors(){
+          var letters = "0123456789ABCDEF";
+          var color = "#";
+          var colors = new Array();
+          var i, j;
+
+          for(i = 0; i < 12; i++){
+              for(j = 0; j < 6; j++){
+                  color += letters[Math.floor(Math.random() * 16)];
+              }
+              colors[i] = color;
+              color = "#";
+          }
+
+          return colors;
+      }
+
+      ctx = $("#line");
+      data = {
+          labels: ["2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017"],
+          datasets: [{
+              label: "Track Grade",
+              fill: false,
+              lineTension: 0.1,
+              backgroundColor: "rgba(75,192,192,0.4)",
+              borderColor: "rgba(75,192,192,1)",
+              borderCapStyle: 'butt',
+              borderDash: [],
+              borderDashOffset: 0.0,
+              borderJoinStyle: 'miter',
+              pointBorderColor: "rgba(75,192,192,1)",
+              pointBackgroundColor: "#fff",
+              pointBorderWidth: 1,
+              pointHoverRadius: 5,
+              pointHoverBackgroundColor: "rgba(75,192,192,1)",
+              pointHoverBorderColor: "rgba(220,220,220,1)",
+              pointHoverBorderWidth: 2,
+              pointRadius: 1,
+              pointHitRadius: 10,
+              data: [200,252,380,389,412,420,500,750,730,800],
+              spanGaps: false,
+          }]
+      };
+
+
+      var myLineChart = new Chart(ctx, {
+          type: 'line',
+          data: data,
+          options: {}
+      });
+
+
+  });
+
+  </script>
 </body>
-</html>
-
-<script>
-
-$(document).ready(function() {
-    
-    var options = {
-        legend: {
-            position: "bottom",
-            labels: {
-                padding: 20
-            }
-        }
-    };
-    var ctx = $("#pie");
-        
-        // data
-    var colors = getRandomColors();
-    var data = {
-        labels: [
-            "Mother Tongue",
-            "Filipino",
-            "English",
-            "Mathematics",
-            "Science",
-            "Araling Panlipunan",
-            "Edukasyon sa Pagpakatao",
-            "Music",
-            "Arts",
-            "Physical Education",
-            "Health",
-            "Edukasyong Pantahanan at Pangkabuhayan"
-        ],
-        datasets: [
-            {
-                data:[9, 9, 35, 9, 15, 9, 9, 1, 1, 1, 1, 1],
-                backgroundColor: [
-                    colors[0],
-                    colors[1],
-                    colors[2],
-                    colors[3],
-                    colors[4],
-                    colors[5],
-                    colors[6],
-                    colors[7],
-                    colors[8],
-                    colors[9],
-                    colors[10],
-                    colors[11]
-                ],
-                hoverBackgroundColor: [
-                    colors[0],
-                    colors[1],
-                    colors[2],
-                    colors[3],
-                    colors[4],
-                    colors[5],
-                    colors[6],
-                    colors[7],
-                    colors[8],
-                    colors[9],
-                    colors[10],
-                    colors[11]
-                ]
-            }]
-
-    };
-
-    function getRandomColors(){
-        var letters = "0123456789ABCDEF";
-        var color = "#";
-        var colors = new Array();
-        var i, j;
-
-        for(i = 0; i < 12; i++){
-            for(j = 0; j < 6; j++){
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            colors[i] = color;
-            color = "#";
-        }
-
-        return colors;
-    }
-
-    ctx = $("#line");
-    data = {
-        labels: ["2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017"],
-        datasets: [{
-            label: "Track Grade",
-            fill: false,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "rgba(75,192,192,1)",
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
-            data: [200,252,380,389,412,420,500,750,730,800],
-            spanGaps: false,
-        }]
-    };
-
-
-    var myLineChart = new Chart(ctx, {
-        type: 'line',
-        data: data,
-        options: {}
-    });
-
-
-});
-
-</script>
-
-</body>
-
 </html>

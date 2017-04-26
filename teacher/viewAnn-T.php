@@ -34,6 +34,18 @@ $adminName.=$admin[4];
   <link href="../css/font-awesome.min.css" rel="stylesheet">
   <link href="../css/simple-line-icons.css" rel="stylesheet">
   <link href="../css/style.css" rel="stylesheet">
+
+  <style>
+    pre {
+      font-family: "Verdana";
+      font-size: 1.1em;
+      white-space: pre-wrap;
+      white-space:  -moz-pre-wrap;
+      white-space: -pre-wrap;
+      white-space: -o-pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
 </head>
 
 <body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
@@ -71,7 +83,7 @@ $adminName.=$admin[4];
                   $date.=" "."at"." ";
                   $date.=date("h:i A", strtotime($ann[4]));
                   echo 
-                  "<p>".$ann[3]."</p>
+                  "<pre>".$ann[3]."</pre>
                   <hr>
                   <img src='../".$admin[5]."' class='img-avatar' height='25px'>
                   <br>
