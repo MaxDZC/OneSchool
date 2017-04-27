@@ -11,8 +11,90 @@ $id = $_POST["id"];
 $sectionT=mysqli_query($mysqli, "SELECT * FROM subsection WHERE sec_id = ".$id." AND active = 1");
 $section=mysqli_fetch_array($sectionT);
 
-$schedT=mysqli_query($mysqli, "SELECT * FROM schedule WHERE sec_id = ".$id." AND active = 1 ORDER BY UNIX_TIMESTAMP(time_start)");
+$schedT=mysqli_query($mysqli, "SELECT * FROM schedule WHERE sec_id = ".$id." AND grade_level = ".$section[2]." AND active = 1 ORDER BY days, time_start");
 $num=mysqli_num_rows($schedT);
+
+$subjectCheckerT=mysqli_query($mysqli, "SELECT subj_id FROM schedule WHERE sec_id = ".$id." AND grade_level = ".$section[2]." AND active = 1");
+
+$subjectCheck = array();
+while($subjectChecker=mysqli_fetch_array($subjectCheckerT)) {
+  array_push($subjectCheck, $subjectChecker[0]);
+}
+
+if(count($subjectCheck) != 0) {
+  $stmt = "SELECT sched_id, time_start, time_end, days, subj_id FROM schedule WHERE sec_id IS NULL AND grade_level = ".$section[2]." AND subj_id NOT IN (".implode(", ", $subjectCheck).") ORDER BY time_start, days";
+} else {
+  $stmt = "SELECT sched_id, time_start, time_end, days, subj_id FROM schedule WHERE sec_id IS NULL AND grade_level = ".$section[2]." ORDER BY time_start, days";
+}
+
+$addSchedT=mysqli_query($mysqli, $stmt);
+
+$cnt=mysqli_num_rows($addSchedT);
+
+if($cnt != 0) {
+  $avail = array();
+  $availDays = array();
+  while($addSched=mysqli_fetch_array($addSchedT)) {
+    array_push($availDays, $addSched[3]);
+    array_push($avail, $addSched[0]);
+    array_push($avail, $addSched[1]);
+    array_push($avail, $addSched[2]);
+  }
+
+  if($num != 0) {
+    $schedSecT=mysqli_query($mysqli, "SELECT sched_id, time_start, time_end, days FROM schedule WHERE sec_id = ".$id." AND grade_level = ".$section[2]." AND active = 1 ORDER BY time_start, days");
+
+    $inSection = array();
+    $sectionDays = array();
+    while($schedSec=mysqli_fetch_array($schedSecT)) {
+      array_push($sectionDays, $schedSec[3]);
+      array_push($inSection, $schedSec[0]);
+      array_push($inSection, $schedSec[1]);
+      array_push($inSection, $schedSec[2]);
+    }
+
+    $cnt = count($avail);
+    $cnt2 = count($inSection);
+
+    
+    for($i = $j = 1; $i < $cnt && $j < $cnt2;) {
+      if($avail[$i + 1] <= $inSection[$j]) {
+        $i += 3;
+      } else if($inSection[$j + 1] <= $avail[$i]) {
+        $j += 3;
+      } else if(($avail[$i] >= $inSection[$j] && $avail[$i] < $inSection[$j + 1]
+        || $avail[$i + 1] > $inSection[$j] && $avail[$i + 1] <= $inSection[$j + 1]
+        || $avail[$i] <= $inSection[$j] && $avail[$i + 1] >= $inSection[$j + 1])
+        && ($availDays[$i/3] & $sectionDays[$j/3]) != 0) {
+        array_splice($availDays, ($i/3), 1);
+        array_splice($avail, $i - 1, 3);
+        $cnt -= 3;
+      } else {
+        $i += 3;
+      }
+    }
+
+    $cnt = count($avail);
+
+  } else {
+    $cnt = count($avail);
+  }
+}
+
+$classesT=mysqli_query($mysqli, "SELECT * FROM class WHERE sec_id = ".$id." AND active = 1");
+
+$classArray = array();
+while($classes=mysqli_fetch_array($classesT)) {
+  array_push($classArray, $classes[0]);
+}
+
+$studNum=count($classArray);
+
+if($studNum != 0) {
+  $studs=mysqli_query($mysqli, "SELECT student_id FROM section WHERE class_id IN (".implode(", ", $classArray).") group by student_id having count(student_id) = ".$studNum."");
+
+  $studNum = mysqli_num_rows($studs);
+}
 
 ?>
 <!DOCTYPE html>
@@ -22,7 +104,7 @@ $num=mysqli_num_rows($schedT);
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <title>One School - Create Teacher</title>
+  <title>One School - View Schedule</title>
 
   <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
 
@@ -53,68 +135,104 @@ $num=mysqli_num_rows($schedT);
           </div>
 
           <div class="card-block">
-          <?php
-            if($num == 0) {
-              echo "This section has no schedules.";
-            } else {
+            <form action="enrollTeacher.php" method="POST">
+              <input type="hidden" name="sec_id" value="<?php echo $id; ?>" required>
+              <input type="hidden" name="sched_id" value="" required>
+            </form>
 
-              echo "
-              <table class='table table-striped table-bordered'>
-                <thead>
-                  <th>Subject</th>
-                  <th>Time</th>
-                  <th>Teacher</th>
-                </thead>
-                <tbody>";
+            <form action="changeTeacher.php" method="POST">
+              <input type="hidden" name="sec_id" value="<?php echo $id; ?>" required>
+              <input type="hidden" name="sched_id" value="" required>
+              <input type="hidden" name="id" value="" required>
+            </form>
 
-              while($sched=mysqli_fetch_array($schedT)) {
-                $subjT=mysqli_query($mysqli, "SELECT subject FROM SUBJECTS WHERE subj_id = ".$sched[1]." AND active = 1");
-                $teacherT=mysqli_query($mysqli, "SELECT teacher_id FROM class WHERE sched_id = ".$sched[0]." AND active = 1");
+            <?php
+              if($num == 0) {
+                echo "This section has no schedules.";
+              } else {
 
-                if(mysqli_num_rows($subjT) == 1) {
+                echo "
+                <table class='table table-striped table-bordered'>
+                  <thead>
+                    <th>Subject</th>
+                    <th>Time</th>
+                    <th>Teacher</th>
+                    <th>Action</th>
+                  </thead>
+                  <tbody>";
 
-                  if(mysqli_num_rows($teacherT) == 1) {
-                    $teacherID=mysqli_fetch_array($teacherT);
+                while($sched=mysqli_fetch_array($schedT)) {
+                  $subjT=mysqli_query($mysqli, "SELECT subject FROM SUBJECTS WHERE subj_id = ".$sched[1]." AND active = 1");
+                  $teacherT=mysqli_query($mysqli, "SELECT teacher_id FROM class WHERE sched_id = ".$sched[0]." AND active = 1");
 
-                    $teacherNameT=mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName FROM teacher WHERE teacher_id = '".$teacherID[0]."' AND active = 1");
-                    $teacherName=mysqli_fetch_array($teacherNameT);
+                  if(mysqli_num_rows($subjT) == 1) {
 
-                    $name=$teacherName[2].", ".$teacherName[0];
-                    if($teacherName[1]) { $name.=" ".$teacherName[1][0]."."; }
+                    if(mysqli_num_rows($teacherT) == 1) {
+                      $teacherID=mysqli_fetch_array($teacherT);
 
-                  } else {
-                    $name = "No teacher yet.";
-                  }
+                      $teacherNameT=mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName FROM teacher WHERE teacher_id = '".$teacherID[0]."' AND active = 1");
+                      $teacherName=mysqli_fetch_array($teacherNameT);
 
-                  $subj=mysqli_fetch_array($subjT);
+                      $name=$teacherName[2].", ".$teacherName[0];
+                      if($teacherName[1]) { $name.=" ".$teacherName[1][0]."."; }
 
-                    
+                    } else {
+                      $name = "No teacher yet.";
+                    }
 
-                  $date=date("h:i A", strtotime($sched[3]))." - ".date("h:i A", strtotime($sched[4]));
-                  $days= "";
+                    $subj=mysqli_fetch_array($subjT);        
 
-                  if($sched[5] & 1){ $days = "M"; }
-                  if($sched[5] & 2){ $days .= "T"; }
-                  if($sched[5] & 4){ $days .= "W"; }
-                  if($sched[5] & 8){ $days .= "TH"; }
-                  if($sched[5] & 16){ $days .= "F"; }
-                  if($sched[5] & 32){ $days .= "Sat"; }
-                  if($sched[5] & 64){ $days .= "Sun"; }
+                    $date=date("h:i A", strtotime($sched[3]))." - ".date("h:i A", strtotime($sched[4]));
+                    $days= "";
 
-                  $date .= " ".$days;
+                    if($sched[5] & 1){ $days = "M"; }
+                    if($sched[5] & 2){ $days .= "T"; }
+                    if($sched[5] & 4){ $days .= "W"; }
+                    if($sched[5] & 8){ $days .= "TH"; }
+                    if($sched[5] & 16){ $days .= "F"; }
+                    if($sched[5] & 32){ $days .= "Sat"; }
+                    if($sched[5] & 64){ $days .= "Sun"; }
 
-                  echo "
-                  <tr>
-                    <td>".$subj[0]."</td>
-                    <td>".$date."</td>
-                    <td>".$name."</td>
-                  </tr>
-                  ";
-                }            
+                    $date .= " ".$days;
+
+                    echo "
+                    <tr>
+                      <td>".$subj[0]."</td>
+                      <td>".$date."</td>
+                      <td>".$name."</td>
+                      <td>
+                        <center>";
+
+                    if($name == "No teacher yet.") {
+                      echo "
+                        <a href='javascript: addTeacher(".$sched[0].")'>
+                          <button class='btn btn-sm btn-success'>
+                            <i class='icon-user-follow'></i> Add Teacher
+                          </button>
+                        </a>";
+                    } else {
+                      echo "
+                        <a href='javascript: changeTeacher(".$sched[0].", \"".$teacherID[0]."\") '>
+                          <button class='btn btn-sm btn-warning'>
+                            <i class='icon-people'></i> Change Teacher
+                          </button>
+                        </a>";
+                    }
+                     
+                   echo "</center>
+                      </td>
+                    </tr>";
+                  }            
+                }
+                echo "
+                  </tbody>
+                </table>";
               }
-              echo "</tbody></table>";
-            }
-          ?>                    
+            ?>
+            <hr>
+            <button class="btn btn-md btn-primary" data-toggle="modal" data-target="#addSched" <?php if($studNum != 0) { echo "disabled"; } ?>>
+              <i class="icon-plus"></i> <?php if($studNum != 0) { echo "There are Students Enrolled"; } else { echo "Add Schedule"; } ?>
+            </button>                 
           </div>
 
         </div> <!-- Row and stuff -->              
@@ -124,8 +242,8 @@ $num=mysqli_num_rows($schedT);
     </main>
   </div>
 
-  <div class="modal" id="addClass" role="dialog">
-    <div class="modal-dialog modal-md">
+  <div class="modal" id="addSched" role="dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
 
         <div class="modal-header">
@@ -141,54 +259,68 @@ $num=mysqli_num_rows($schedT);
               <div class="card">
                 <div class="card-block">
 
-                  <form action="insertSection.php" method="POST" class="form-horizontal">
-
-                    <div class="form-group row">
-                      <label class="col-md-3" for="grade">Grade: </label>
-                      <div class="col-md-9">
-                        <select name="grade" class="form-control" required>
-                          <option value="" selected>Select Grade Level</option>
-                          <option ng-repeat="i in [1,2,3,4,5,6,7,8,9,10]" value="{{i}}">Grade {{i}}</option>
-                        </select>
-                      </div>    
-                    </div>
-                                
-                    <div class="form-group row">
-                      <label class="col-md-3 form-control-label" for="section">Section: </label>
-                      <div class="col-md-9">
-                        <input type="text" name="section" class="form-control" placeholder="Section Name">
-                      </div>
-                    </div>
-
-                    <div class="form-group row">
-                      <label class="col-md-3 form-control-label" for="studs">Max. No. of Students: </label>
-                      <div class="col-md-9">
-                        <input type="number" name="size" class="form-control" placeholder="Size of Class">
-                      </div>
-                    </div>
-
-                    <div class="form-group row">
-                      <label class="col-md-3 form-control-label" for="studs">Adviser: </label>
-                      <div class="col-md-9">
-                        <select name="adviser" class="form-control" required>
-                          <option value="" selected>Select an adviser</option>
-                          <?php
-                            while($teacher=mysqli_fetch_array($teacherList)) {
-                              $teachName=$teacher[2].", ".$teacher[0];
-                              if($teacher[1]) { $teachName .= " ".$teacher[1][0]."."; }
-                              echo "<option value='".$teacher[3]."'>".$teachName."</option>";
-                            }
-                          ?>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div class="card-footer">
-                      <button class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Submit</button>
-                    </div>
-
+                  <form action="insertSchedSection.php" method="POST" class="form-horizontal">
+                    <input type="hidden" name="sec_id" value="<?php echo $id; ?>" hidden>
+                    <input type="hidden" name="id" value="" hidden>
                   </form>
+                  <?php
+                    if($cnt != 0) {
+                      echo "
+                        <table class='table table-bordered'>
+                          <thead>
+                            <th>Subject</th>
+                            <th>Time</th>
+                            <th>Action</th>
+                          </thead>
+                          <tbody>";
 
+                      for($i = 0; $i < $cnt; $i+=3) {
+                        $freeScheds=mysqli_query($mysqli, "SELECT * FROM SCHEDULE WHERE SCHED_ID = ".$avail[$i]." ");
+                        $freeSched=mysqli_fetch_array($freeScheds);
+
+                        $subjectNameT=mysqli_query($mysqli, "SELECT SUBJECT FROM SUBJECTS WHERE subj_id = ".$freeSched[1]." ");
+                        $subjectName=mysqli_fetch_array($subjectNameT);
+
+                        $date=date("h:i A", strtotime($freeSched[3]))." - ".date("h:i A", strtotime($freeSched[4]));
+
+                        $days= "";
+
+                        if($freeSched[5] & 1){ $days = "M"; }
+                        if($freeSched[5] & 2){ $days .= "T"; }                                                
+                        if($freeSched[5] & 4){ $days .= "W"; }
+                        if($freeSched[5] & 8){ $days .= "TH"; }  
+                        if($freeSched[5] & 16){ $days .= "F"; }
+                        if($freeSched[5] & 32){ $days .= "Sat"; } 
+                        if($freeSched[5] & 64){ $days .= "Sun"; }
+
+                        $date .= " ".$days;
+
+                        echo "
+                        <tr>
+                          <td>".$subjectName[0]."</td>
+                          <td>".$date."</td>
+                          <td>
+                            <center>
+                              <a href='javascript: addForm(".$freeSched[0].")'>
+                                <button class='btn btn-sm btn-primary'>
+                                  <i class='fa fa-dot-circle-o'></i> Add Schedule
+                                </button>
+                              </a>
+                            </center>
+                          </td>
+                        </tr>";
+
+                      }
+
+                      echo "
+                        </tbody>
+                      </table>";
+
+                    } else {
+                      echo "There are no available schedules.";
+                    }
+
+                  ?>
                 </div>
               </div>
             </div>        
@@ -207,5 +339,27 @@ $num=mysqli_num_rows($schedT);
   <script src="../js/jquery.js"></script>
   <script src="../js/bootstrap.min.js"></script>
   <script src="../js/app.js"></script>
+
+  <script>
+    function addTeacher(sched_id)
+    {
+      document.forms[0].sched_id.value = sched_id;
+      document.forms[0].submit();
+    }
+
+    function changeTeacher(sched_id, id)
+    {
+      document.forms[1].sched_id.value = sched_id;
+      document.forms[1].id.value = id;
+      document.forms[1].submit();
+    }
+
+    function addForm(id)
+    {
+      document.forms[2].id.value = id;
+      document.forms[2].submit();
+    }
+  </script>
+
 </body>
 </html>

@@ -11,8 +11,7 @@ $id = $_POST["id"];
 $scheduleT=mysqli_query($mysqli, "SELECT * FROM schedule WHERE sched_id = ".$id." ");
 $subjList=mysqli_query($mysqli, "SELECT * FROM subjects WHERE active = 1");
 
-$teacherList=mysqli_query($mysqli, "SELECT teacher_id, t_fName, t_mName, t_lName FROM teacher WHERE active = 1");
-
+$teacherList=mysqli_query($mysqli, "SELECT teacher_id, t_fName, t_mName, t_lName FROM teacher WHERE active = 1 ORDER BY t_lName");
 
 $schedule=mysqli_fetch_array($scheduleT);
 
@@ -24,7 +23,7 @@ $schedule=mysqli_fetch_array($scheduleT);
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <title>One School - Create Teacher</title>
+  <title>One School - Edit Schedule</title>
 
   <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
 
@@ -44,7 +43,7 @@ $schedule=mysqli_fetch_array($scheduleT);
       <ol class="breadcrumb">
         <li class="breadcrumb-item">Admin Tasks</li>
         <li class="breadcrumb-item"><a href="createsched.php">Schedule Plot</a></li>
-        <li class="breadcrumb-item active">Schedule Plot</li>
+        <li class="breadcrumb-item active">Edit Schedule</li>
       </ol>
 
       <div class="container-fluid">
@@ -52,12 +51,14 @@ $schedule=mysqli_fetch_array($scheduleT);
         <div class="row col-lg-16 card">
 
           <div class="card-header">
-            <strong>Created Schedule</strong>
+            <strong>Update Schedule</strong>
           </div>
 
           <div class="card-block">
 
              <form action="updateSched.php" onsubmit="return validate();" method="POST" class="form-horizontal">
+
+              <input type="hidden" name="id" value="<?php echo $id; ?>">
 
               <div class="form-group row">
                   <label class="col-md-3 form-control-label">Grade Level</label>
@@ -91,23 +92,16 @@ $schedule=mysqli_fetch_array($scheduleT);
               </div>
 
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="password-input">Time Start</label>
+                <label class="col-md-3 form-control-label">Time Start</label>
                 <div class="col-md-4">
                   <input type="time" name="time_start" value="<?php echo $schedule[3]; ?>" required>
                 </div>
               </div>
 
               <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="password-input">Time End</label>
+                <label class="col-md-3 form-control-label">Time End</label>
                 <div class="col-md-4">
                   <input type="time" name="time_end" value="<?php echo $schedule[4]; ?>" required>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label class="col-md-3 form-control-label" for="password-input">Time End</label>
-                <div class="col-md-4">
-                  <option name="teacher" value="<?php echo $schedule[4]; ?>" required>
                 </div>
               </div>
 
@@ -136,7 +130,6 @@ $schedule=mysqli_fetch_array($scheduleT);
                 </span>
               </div>
 
-
               <button class="btn btn-md btn-success"><i class="icon-note"></i> Update Schedule</button>  
             </form>                      
           </div>
@@ -154,5 +147,28 @@ $schedule=mysqli_fetch_array($scheduleT);
   <script src="../js/jquery.js"></script>
   <script src="../js/bootstrap.min.js"></script>
   <script src="../js/app.js"></script>
+
+  <script>
+    function validate()
+    {
+      mon = document.getElementById('mon').checked;
+      tue = document.getElementById('tue').checked;
+      wed = document.getElementById('wed').checked;
+      thu = document.getElementById('thu').checked;
+      fri = document.getElementById('fri').checked;
+      sat = document.getElementById('sat').checked;
+      sun = document.getElementById('sun').checked;
+
+      ts = document.forms[0].time_start.value;
+      te = document.forms[0].time_end.value;
+
+      if((mon || tue || wed || thu || fri || sat || sun) && ts < te) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  </script>
+
 </body>
 </html>

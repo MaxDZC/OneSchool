@@ -68,7 +68,7 @@ $table=mysqli_query($mysqli,"SELECT * FROM student WHERE active = 1 ORDER BY stu
                     "<tr>
                       <td>".$row[0]."</td>
                       <td>".$name."</td>
-                      <td>".$row[6]."</td>
+                      <td><center>".$row[6]."</center></td>
                       <td>
                         <center>
                           <a href='javascript: editStud(\"".$row[0]."\")'>

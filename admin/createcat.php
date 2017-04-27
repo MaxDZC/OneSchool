@@ -16,7 +16,7 @@ $subjT2=mysqli_query($mysqli,"SELECT * FROM subjects WHERE active = 1");
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <title>One School - Create Teacher</title>
+  <title>One School - Create Subjects</title>
 
   <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
 
@@ -65,11 +65,17 @@ $subjT2=mysqli_query($mysqli,"SELECT * FROM subjects WHERE active = 1");
                       "<tr>
                         <td>".$row[1]."</td>
                         <td>
-                          <center>
-                            <a href='javascript: delSubj(".$row[0].")'>
-                              <button class='btn btn-sm btn-danger'><i class='icon-minus'></i> Delete</button>
-                            </a>
-                          </center>
+                          <center>";
+
+                      $check=mysqli_query($mysqli, "SELECT * FROM GRADES WHERE SUBJ_ID = ".$row[0]." ");
+                      if(mysqli_num_rows($check) == 0) {
+                        echo "
+                        <a href='javascript: delSubj(".$row[0].")'>
+                          <button class='btn btn-sm btn-danger'><i class='icon-minus'></i> Delete</button>
+                        </a>";
+                      }
+
+                      echo "</center>
                         </td>
                       </tr>";
                     }

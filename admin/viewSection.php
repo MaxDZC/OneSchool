@@ -22,6 +22,29 @@ $num=count($classArray);
 
 $studentList=mysqli_query($mysqli, "SELECT * FROM student WHERE grade_level = ".$section[2]." AND sec_id IS NULL AND active = 1 ORDER BY s_lName");
 
+$schedT=mysqli_query($mysqli, "SELECT * FROM schedule WHERE sec_id = ".$id." AND active = 1 ORDER BY time_start");
+
+
+$stat = true;
+
+if(mysqli_num_rows($schedT) == 0) {
+  $stat = false;
+}
+
+
+$stats = true;
+
+while($sched=mysqli_fetch_array($schedT)) {
+
+  if($stats) {
+    $teacherT=mysqli_query($mysqli, "SELECT teacher_id FROM class WHERE sched_id = ".$sched[0]." AND active = 1");
+
+    if(mysqli_num_rows($teacherT) == 0) {
+      $stats = false;
+    }
+  }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en" ng-app>
@@ -30,7 +53,7 @@ $studentList=mysqli_query($mysqli, "SELECT * FROM student WHERE grade_level = ".
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <title>One School - Create Teacher</title>
+  <title>One School - View Section</title>
 
   <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
 
@@ -114,9 +137,9 @@ $studentList=mysqli_query($mysqli, "SELECT * FROM student WHERE grade_level = ".
             }
           ?>
           <hr>
-          <button class="btn btn-md btn-primary" data-toggle="modal" data-target="#enrollStud">
-            <i class="icon-plus"></i> Enroll Student
-          </button>                       
+          <button class="btn btn-md btn-primary" data-toggle="modal" data-target="#enrollStud" <?php if(!$stats || !$stat) { echo "disabled"; }?>>
+            <i class="icon-plus"></i> <?php if(!$stat) { echo "This Section Has No Classes"; } else if(!$stats) { echo "Not All Schedules Have Teachers."; } else { echo "Enroll Student(s)"; } ?>
+          </button>                   
           </div>
 
         </div> <!-- Row and stuff -->              
@@ -131,7 +154,7 @@ $studentList=mysqli_query($mysqli, "SELECT * FROM student WHERE grade_level = ".
       <div class="modal-content">
 
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"><strong>Class Creation</strong></h5>
+          <h5 class="modal-title" id="exampleModalLabel"><strong>Enroll Student</strong></h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -146,16 +169,19 @@ $studentList=mysqli_query($mysqli, "SELECT * FROM student WHERE grade_level = ".
                   <form action="enrollStud.php" method="POST" class="form-horizontal">
                     <input type="hidden" name="sec_id" value="<?php echo $id; ?>">
 
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th>Student ID</th>
-                          <th>Student Name</th>
-                          <th>Enroll</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      <?php
+                    <?php 
+                      if(mysqli_num_rows($studentList) != 0) {
+                        echo "
+                        <table class='table table-bordered'>
+                          <thead>
+                            <tr>
+                              <th>Student ID</th>
+                              <th>Student Name</th>
+                              <th>Enroll</th>
+                            </tr>
+                          </thead>
+                          <tbody>";
+
                         while($student=mysqli_fetch_array($studentList)) {
                           $sName= $student[4].", ".$student[2];
                           if($student[3]) { $sName.= " ".$student[3][0]."."; }
@@ -168,14 +194,17 @@ $studentList=mysqli_query($mysqli, "SELECT * FROM student WHERE grade_level = ".
                             </td>
                           </tr>";
                         }
-                      ?>
-                      </tbody>
-                    </table>
 
-                    <div class="card-footer">
-                      <button class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Submit</button>
-                    </div>
-
+                        echo "
+                          </tbody>
+                        </table>
+                        <div class='card-footer'>
+                          <button class='btn btn-sm btn-primary'><i class='fa fa-dot-circle-o'></i> Submit</button>
+                        </div>";
+                      } else {
+                        echo "There are no students that can enroll in this section.";
+                      }
+                    ?>
                   </form>
 
                 </div>
@@ -203,6 +232,7 @@ $studentList=mysqli_query($mysqli, "SELECT * FROM student WHERE grade_level = ".
       document.forms[0].id.value = id;
       document.forms[0].submit();
     }
+
   </script>
 
 </body>

@@ -6,7 +6,7 @@ if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'A'){
   header("location: ../index.php");
 }
 
-$schedT=mysqli_query($mysqli, "SELECT * FROM schedule WHERE active = 1 ORDER BY time_start, grade_level");
+$schedT=mysqli_query($mysqli, "SELECT * FROM schedule WHERE active = 1 ORDER BY sec_id, time_start, grade_level");
 $subjList=mysqli_query($mysqli, "SELECT * FROM subjects WHERE active = 1 ORDER BY subj_id");
 
 ?>
@@ -17,7 +17,7 @@ $subjList=mysqli_query($mysqli, "SELECT * FROM subjects WHERE active = 1 ORDER B
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <title>One School - Create Teacher</title>
+  <title>One School - Create Schedules</title>
 
   <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
 
@@ -53,7 +53,7 @@ $subjList=mysqli_query($mysqli, "SELECT * FROM subjects WHERE active = 1 ORDER B
               <input type="hidden" name="id" value="" required>
             </form>
 
-            <form action="editSched.php">
+            <form action="delSched.php" method="POST">
               <input type="hidden" name="id" value="" required>
             </form>
 
@@ -63,6 +63,7 @@ $subjList=mysqli_query($mysqli, "SELECT * FROM subjects WHERE active = 1 ORDER B
                 <th>Subject</th>
                 <th>Time</th>
                 <th>Teacher</th>
+                <th>Section</th>
                 <th>Action</th>
               </thead>
               <tbody>
@@ -102,26 +103,42 @@ $subjList=mysqli_query($mysqli, "SELECT * FROM subjects WHERE active = 1 ORDER B
                       $name = "No Teacher Yet";
                     }
 
+                    if($row[6]) {
+                      $sectionT=mysqli_query($mysqli, "SELECT section_name FROM SUBSECTION WHERE sec_id = ".$row[6]." ");
+                      $sectionA=mysqli_fetch_array($sectionT); 
+
+                      $section=$sectionA[0];
+                    } else {
+                      $section = "None";
+                    }
+
                     echo "
                     <tr>
                       <td><center>".$row[2]."</center></td>
                       <td>".$subj[0]."</td>
                       <td>".$date."</td>
                       <td>".$name."</td>
+                      <td>".$section."</td>
                       <td>
-                        <center>
-                          <a href='javascript: formEdit(".$row[0].")'>
-                            <button class='btn btn-sm btn-success'>
-                              <i class='icon-check'></i> Edit
-                            </button> 
-                          </a>
-                          <a href='data11.php?level=".$row[0]."&subj=".$row[1]."&sched=".$row[2]."'>
+                        <center>";
+
+                    if(!$row[6]) {
+                      echo "
+                      <a href='javascript: formEdit(".$row[0].")'>
+                        <button class='btn btn-sm btn-success'>
+                          <i class='icon-check'></i> Edit
+                        </button> 
+                      </a>
+                      <a href='javascript: formDel(".$row[0].")'>
                         <button class='btn btn-sm btn-danger'>
                           <i class='icon-minus'></i> Delete
-                        </button></a>
-                        </center>
+                        </button>
+                      </a>";
+                    }
+                    echo  
+                      "</center>
                       </td>
-                      </tr>";
+                    </tr>";
                   }
                 }
               ?>
@@ -253,6 +270,11 @@ $subjList=mysqli_query($mysqli, "SELECT * FROM subjects WHERE active = 1 ORDER B
       document.forms[0].submit();
     }
 
+    function formDel(id)
+    {
+      document.forms[1].id.value = id;
+      document.forms[1].submit();
+    }
 
     function validate()
     {

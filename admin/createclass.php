@@ -17,7 +17,7 @@ $teacherList = mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName, teacher_
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <title>One School - Create Teacher</title>
+  <title>One School - Edit Section</title>
 
   <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
 
@@ -53,6 +53,10 @@ $teacherList = mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName, teacher_
             </form>
 
             <form action="viewSection.php" method="POST">
+              <input type="hidden" name="id" value="" required>
+            </form>
+
+            <form action="editSection.php" method="POST">
               <input type="hidden" name="id" value="" required>
             </form>
 
@@ -103,7 +107,7 @@ $teacherList = mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName, teacher_
 
                     echo 
                     "<tr>
-                      <td>".$row[2]."</td>
+                      <td><center>".$row[2]."</center></td>
                       <td>".$row[3]."</td>
                       <td>".$name."</td>
                       <td><center>".$num."/".$row[4]."</center></td>
@@ -113,7 +117,10 @@ $teacherList = mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName, teacher_
                             <button type='submit' class='btn btn-sm btn-success'><i class='fa fa-circle-o'></i> View Schedule</button>
                           </a> 
                           <a href='javascript: viewForm(".$row[0].")'>
-                            <button type='submit' class='btn btn-sm btn-success'><i class='fa fa-circle-o'></i> View Students</button>
+                            <button type='submit' class='btn btn-sm btn-success'><i class='fa fa-eye'></i> View Students</button>
+                          </a>
+                          <a href='javascript: editForm(".$row[0].")'>
+                            <button type='submit' class='btn btn-sm btn-success'><i class='fa fa-pencil'></i> Edit Section</button>
                           </a> 
                           <a href='javascript: delForm(".$row[0].")'>
                             <button class='btn btn-sm btn-danger'><i class='icon-minus'></i> Delete</button>
@@ -128,9 +135,9 @@ $teacherList = mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName, teacher_
               </tbody>
             </table>
             
-          <button class="btn btn-md btn-primary" data-toggle="modal" data-target="#addClass">
-            <i class="icon-plus"></i> Add Class
-          </button>                       
+            <button class="btn btn-md btn-primary" data-toggle="modal" data-target="#addClass">
+              <i class="icon-plus"></i> Add Section
+            </button>                       
           </div>
 
         </div> <!-- Row and stuff -->              
@@ -179,7 +186,7 @@ $teacherList = mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName, teacher_
                     <div class="form-group row">
                       <label class="col-md-3 form-control-label" for="studs">Max. No. of Students: </label>
                       <div class="col-md-9">
-                        <input type="number" name="size" class="form-control" placeholder="Size of Class">
+                        <input type="number" name="size" class="form-control" placeholder="Size of Section">
                       </div>
                     </div>
 
@@ -237,10 +244,16 @@ $teacherList = mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName, teacher_
       document.forms[1].submit();
     }
 
-    function delForm(id) 
+    function editForm(id) 
     {
       document.forms[2].id.value = id;
       document.forms[2].submit();
+    }
+
+    function delForm(id) 
+    {
+      document.forms[3].id.value = id;
+      document.forms[3].submit();
     }
 
   </script>

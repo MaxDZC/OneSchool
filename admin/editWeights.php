@@ -22,7 +22,7 @@ $ga=mysqli_fetch_array($gaT);
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <title>One School - Create Teacher</title>
+  <title>One School - Edit Weights</title>
 
   <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
 
