@@ -6,13 +6,21 @@ if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'A'){
   header("location: ../index.php");
 }
 
-$id = $_POST["sched_id"];
+$sched_id = $_POST["sched_id"];
 $sec_id = $_POST["sec_id"];
+$id = $_POST["id"];
+
+$teacherNameT=mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName FROM teacher WHERE teacher_id = '".$id."' ");
+$teacherName=mysqli_fetch_array($teacherNameT);
+
+$tName=$teacherName[0];
+if($teacherName[1]) { $tName .= " ".$teacherName[1][0]."."; }
+$tName.= " ".$teacherName[2];
 
 $sectionT=mysqli_query($mysqli, "SELECT * FROM subsection WHERE sec_id = ".$sec_id." AND active = 1");
 $section=mysqli_fetch_array($sectionT);
 
-$scheduleT=mysqli_query($mysqli, "SELECT * FROM schedule WHERE sched_id = ".$id." AND active = 1");
+$scheduleT=mysqli_query($mysqli, "SELECT * FROM schedule WHERE sched_id = ".$sched_id." AND active = 1");
 $schedule=mysqli_fetch_array($scheduleT);
 
 $subjectT=mysqli_query($mysqli, "SELECT subject FROM subjects WHERE subj_id = ".$schedule[1]." AND active = 1");
@@ -49,7 +57,7 @@ for($x = 0; $teacher=mysqli_fetch_array($teacherList); $x++) {
     $lim = 0;
   }
 
-  $toInsert=mysqli_query($mysqli, "SELECT * FROM schedule WHERE sched_id = ".$id." and active = 1");
+  $toInsert=mysqli_query($mysqli, "SELECT * FROM schedule WHERE sched_id = ".$sched_id." and active = 1");
   $insert=mysqli_fetch_array($toInsert);
 
   $status[$x] = true;
@@ -113,16 +121,16 @@ $num = count(array_filter($status));
         <li class="breadcrumb-item">
           <a href="javascript: goBack()">Schedule: <?php echo $section[3]." - Grade ".$section[2]; ?></a>
         </li>
-        <li class="breadcrumb-item active">Teacher Assignment for <?php echo $subject[0]; ?></li>
+        <li class="breadcrumb-item active">Teacher Replacement for <?php echo $tName." for ".$subject[0]; ?></li>
       </ol>
 
       <form action="viewSectionSched.php" method="POST">
         <input type="hidden" name="id" value="<?php echo $sec_id; ?>">
       </form>
 
-      <form action="insertEnrollTeacher.php" method="POST">
+      <form action="replaceEnrollTeacher.php" method="POST">
+        <input type="hidden" name="sched_id" value="<?php echo $sched_id; ?>">
         <input type="hidden" name="sec_id" value="<?php echo $sec_id; ?>">
-        <input type="hidden" name="sched_id" value="<?php echo $id; ?>">
         <input type="hidden" name="teacher_id" value="" required>
       </form>
 
@@ -130,7 +138,7 @@ $num = count(array_filter($status));
 
         <div class="row col-lg-16 card">
           <div class="card-header">
-            <strong>List of Available Teachers For this Subject</strong>
+            <strong>List of Available Teachers That Can Replace <?php echo $tName; ?></strong>
           </div>
 
           <div class="card-block">
@@ -160,8 +168,8 @@ $num = count(array_filter($status));
                       <td>
                         <center>
                           <a href='javascript: enrollTeacher(\"".$teacher[0]."\")'>
-                            <button class='btn btn-sm btn-success'>
-                              <i class='icon-user-follow'></i> Enroll
+                            <button class='btn btn-sm btn-warning'>
+                              <i class='icon-user-follow'></i> Replace
                             </button>
                           </a>
                         </center>

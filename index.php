@@ -1,20 +1,18 @@
 <?php
 session_start();
 
-if(1 == 1) {
-
-  if(!isset($_SESSION['id'])) {
-    $loc = "login.php";
-  } else if($_SESSION['id'][0] == 'S') {
-    $loc = "student/welcome.php";
-  } else if($_SESSION['id'][0] == 'T') {
-    $loc = "teacher/welcome-teacher.php";
-  } else if($_SESSION['id'][0] == 'A') {
-    $loc = "admin/welcome-admin.php";
-  }
-
-  header("location: ".$loc);
+if(!isset($_SESSION['id'])) {
+  $loc = "login.php";
+} else if($_SESSION['id'][0] == 'S') {
+  $loc = "student/welcome.php";
+} else if($_SESSION['id'][0] == 'T') {
+  $loc = "teacher/welcome-teacher.php";
+} else if($_SESSION['id'][0] == 'A') {
+  $loc = "admin/welcome-admin.php";
 }
+
+header("location: ".$loc);
+
 ?>
 
 

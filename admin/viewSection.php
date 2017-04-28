@@ -93,7 +93,7 @@ while($sched=mysqli_fetch_array($schedT)) {
             if($num == 0) {
               echo "There are no students enrolled in this section.";
             } else {
-              $studs=mysqli_query($mysqli, "SELECT student_id FROM section WHERE class_id IN (".implode(", ", $classArray).") group by student_id having count(student_id) = ".$num."");
+              $studs=mysqli_query($mysqli, "SELECT student_id FROM section WHERE class_id IN (".implode(", ", $classArray).") group by student_id having count(student_id) = ".$num." ORDER BY student_id");
 
               if(mysqli_num_rows($studs) == 0) {
                 echo "There are no students enrolled in this section.";

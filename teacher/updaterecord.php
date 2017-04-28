@@ -27,49 +27,41 @@ $gb=mysqli_fetch_array($gbT);
 
   <style type="text/css">
   .topnav {
-      background-color: #1e2f2f;
-      overflow: hidden;
+    background-color: #1e2f2f;
+    overflow: hidden;
   }
 
   .topnav a {
-      float: left;
-      display: block;
-      color: white;
-      text-align: center;
-      padding: 10px 10px 10px 10px;
-      text-decoration: none;
-      font-size: 15px;
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 10px 10px 10px 10px;
+    text-decoration: none;
+    font-size: 15px;
   }
 
   .topnav a:hover {
-      background-color: #0099cc;
-      color: white;
+    background-color: #0099cc;
+    color: white;
   }
 
   .topnav a.active {
-      background-color: #4CAF50;
-      color: red;
+    background-color: #4CAF50;
+    color: red;
   }
   </style>
 
 </head>
 
-
-
-
-
 <body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
-    <header class="app-header navbar">
-        <?php include("header-teacher.php"); ?>
-    </header>
-
+  <header class="app-header navbar">
+    <?php include("header-teacher.php"); ?>
+  </header>
+  
     <div class="app-body">
-        <?php include("sidebar-teacher.php") ?>
-
-        
-        <main class="main">
-
-            
+        <?php include("sidebar-teacher.php") ?>      
+        <main class="main">  
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">Class Record</li>
                 <li class="breadcrumb-item"><?php echo 'Grade '.$_GET["level"].' - '.$_GET["section"];?></li>
@@ -183,7 +175,7 @@ $gb=mysqli_fetch_array($gbT);
                 </div>
             </div>
 
-</div>
+      </div>
 
         </main>
 
@@ -193,7 +185,7 @@ $gb=mysqli_fetch_array($gbT);
 
     </div>
 
-    <script src="../codebase/spreadsheet.php?sheet=1&parent=box"></script>
+    <script src="../codebase/spreadsheet.php?sheet=1&parent=box&math=true"></script>
     <script src="../js/angular.js"></script>
     <script src="../bower_components/jquery/dist/jquery.min.js"></script>
     <script src="../bower_components/tether/dist/js/tether.min.js"></script>   

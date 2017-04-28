@@ -2,11 +2,18 @@
 session_start();
 include("../database/sql_connect.php");
 
-if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'T') {
+if(!isset($_SESSION['name']) || $_SESSION['id'][0] != 'A') {
   header("location: ../index.php");
 }
 
-$id=$_SESSION['id'];
+$id=$_POST["id"];
+
+$teacherNameT=mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName FROM teacher WHERE teacher_id = '".$id."' AND active = 1");
+$teacherName=mysqli_fetch_array($teacherNameT);
+
+$tName=$teacherName[0]." ";
+if($teacherName[1]) { $tName .= $teacherName[1][0].". "; }
+$tName .= $teacherName[2];
 
 $stmt="SELECT * FROM class WHERE teacher_id = '".$id."' AND active = 1";
 $table=mysqli_query($mysqli, $stmt);
@@ -77,6 +84,7 @@ if(mysqli_num_rows($classT) != 0) {
   $cnt = 0;
 }
 
+
 ?>
 <!DOCTYPE html>
 <html lang="en" ng-app>
@@ -84,7 +92,7 @@ if(mysqli_num_rows($classT) != 0) {
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <title>One School - Manage Class</title>
+  <title>One School - View Teacher Schedule</title>
 
   <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
 
@@ -95,15 +103,16 @@ if(mysqli_num_rows($classT) != 0) {
 
 <body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
   <header class="app-header navbar">
-    <?php include("header-teacher.php"); ?>
+    <?php include("header-admin.php"); ?>
   </header>
 
   <div class="app-body">
-    <?php include("sidebar-teacher.php") ?>
+    <?php include("sidebar-admin.php") ?>
     <main class="main">  
       <ol class="breadcrumb">
-        <li class="breadcrumb-item">Class Schedule</li>
-        <li class="breadcrumb-item active">Manage</li>                
+        <li class="breadcrumb-item">Admin Tasks</li>
+        <li class="breadcrumb-item"><a href="createteach.php">Teacher Creation</a></li>
+        <li class="breadcrumb-item active">Viewing Schedule of <?php echo $tName; ?></li>            
       </ol>
 
       <div class="container-fluid">
@@ -115,7 +124,8 @@ if(mysqli_num_rows($classT) != 0) {
                 </div>
                 <div class="card-block" id="print">
 
-                  <form action="delSched.php" method="POST">
+                  <form action="delSchedteacher.php" method="POST">
+                    <input type="hidden" name="id" value="<?php echo $id; ?>">
                     <input type="hidden" name="sched_id" value="" required>
                   </form>
 
@@ -205,6 +215,7 @@ if(mysqli_num_rows($classT) != 0) {
         <div class="modal-body">
 
           <form action="addSched.php" method="POST">
+            <input type="hidden" name="id" value="<?php echo $id; ?>">
             <input type="hidden" name="sched_id" value="" required>
           </form>
 
@@ -218,7 +229,7 @@ if(mysqli_num_rows($classT) != 0) {
               </tr>
             </thead>
             <tbody>
-            <?php
+            <?php 
               for($x = 0; $x < $cnt; $x+=3) {
                 $scheds=mysqli_query($mysqli,"SELECT * FROM schedule WHERE sched_id = ".$availTimes[$x]." AND active = 1");
                 $sched=mysqli_fetch_array($scheds);
@@ -253,7 +264,7 @@ if(mysqli_num_rows($classT) != 0) {
                         </button>
                       </a>
                   </tr>"; 
-                }
+                }  
               }
             ?>
             </tbody>

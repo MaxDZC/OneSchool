@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.17, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.18, for Linux (x86_64)
 --
 -- Host: localhost    Database: oneschooldb
 -- ------------------------------------------------------
--- Server version	5.7.17-0ubuntu0.16.04.2
+-- Server version	5.7.18-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -40,7 +40,7 @@ CREATE TABLE `admin` (
 
 LOCK TABLES `admin` WRITE;
 /*!40000 ALTER TABLE `admin` DISABLE KEYS */;
-INSERT INTO `admin` VALUES ('A14103150','helloworld','Arnold','','Roso','img/profile/Celine 2x2.jpg',1);
+INSERT INTO `admin` VALUES ('A14103150','helloworld','Arnold','','Roso','img/profile/Celine 2x2.jpg',1),('Aroot','','Super',NULL,'User',NULL,1);
 /*!40000 ALTER TABLE `admin` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -130,7 +130,7 @@ CREATE TABLE `class` (
   CONSTRAINT `class_ibfk_2` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `class_ibfk_3` FOREIGN KEY (`sched_id`) REFERENCES `schedule` (`sched_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `class_ibfk_4` FOREIGN KEY (`sec_id`) REFERENCES `subsection` (`sec_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -139,7 +139,7 @@ CREATE TABLE `class` (
 
 LOCK TABLES `class` WRITE;
 /*!40000 ALTER TABLE `class` DISABLE KEYS */;
-INSERT INTO `class` VALUES (2,1,'T14103150',1,1),(3,2,'T14103150',1,1),(40,8,'T14103150',2,1),(42,6,'T17041279',2,1);
+INSERT INTO `class` VALUES (2,1,'T17041279',1,1),(3,2,'T14103150',1,1),(40,8,'T14103150',2,1),(42,6,'T17043224',2,1),(45,18,'T17041279',3,1),(46,15,'T17043224',3,1),(50,3,'T14103150',2,1);
 /*!40000 ALTER TABLE `class` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -168,7 +168,7 @@ CREATE TABLE `dhx_data` (
 
 LOCK TABLES `dhx_data` WRITE;
 /*!40000 ALTER TABLE `dhx_data` DISABLE KEYS */;
-INSERT INTO `dhx_data` VALUES ('1',1,3,'Hi Velasco','0;0;000000;ffffff;left;none;0','Hi Velasco','Hi Velasco'),('1',2,2,'Quiz','0;0;000000;ffffff;left;none;0','Quiz','Quiz'),('1',2,3,'0','0;0;000000;ffffff;left;none;0','0','0');
+INSERT INTO `dhx_data` VALUES ('1',1,3,'','0;0;ffc000;ffffff;left;0;0','',''),('1',2,2,'0','0;0;000000;ffffff;left;none;0','0','0'),('1',2,3,'','0;0;000000;ffffff;left;0;0','',''),('1',8,1,'Final Grade','0;0;000000;ffffff;left;none;0','Final Grade','Final Grade'),('1',3,2,'0','0;0;000000;ffffff;left;none;0','0','0'),('1',3,3,'','0;0;000000;ffffff;left;0;0','',''),('1',4,2,'0','0;0;000000;ffffff;left;none;0','0','0'),('1',4,3,'','0;0;000000;ffffff;left;0;0','',''),('1',5,3,'','0;0;000000;ffffff;left;0;0','',''),('1',5,2,'=sum(B2:D2)','0;0;000000;ffffff;left;none;0','=sum(B2;C2;D2)','0'),('1',6,2,'0','0;0;000000;ffffff;left;none;0','0','0'),('1',7,2,'0','0;0;000000;ffffff;left;none;0','0','0'),('1',6,3,'','0;0;000000;ffffff;left;0;0','',''),('1',7,3,'','0;0;000000;ffffff;left;0;0','',''),('1',7,1,'Final Exam','0;0;000000;ffffff;left;none;0','Final Exam','Final Exam'),('1',8,2,'0','0;0;000000;ffffff;left;none;0','0','0'),('1',8,3,'','0;0;000000;ffffff;left;0;0','',''),('1',1,2,'Velasco, Jan Joshua O.','0;0;000000;ffffff;left;none;0','Velasco, Jan Joshua O.','Velasco, Jan Joshua O.'),('1',6,1,'Midterm Exam','0;0;000000;ffffff;left;none;0','Midterm Exam','Midterm Exam'),('1',5,1,'Assignments','0;0;000000;ffffff;left;none;0','Assignments','Assignments'),('1',4,1,'Projects','0;0;000000;ffffff;left;none;0','Projects','Projects'),('1',3,1,'Seatwork','0;0;000000;ffffff;left;none;0','Seatwork','Seatwork'),('1',2,1,'Quiz','0;0;000000;ffffff;left;none;0','Quiz','Quiz'),('1',1,1,'Student Name','0;0;000000;ffffff;left;none;0','Student Name','Student Name');
 /*!40000 ALTER TABLE `dhx_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -194,7 +194,7 @@ CREATE TABLE `dhx_header` (
 
 LOCK TABLES `dhx_header` WRITE;
 /*!40000 ALTER TABLE `dhx_header` DISABLE KEYS */;
-INSERT INTO `dhx_header` VALUES ('1',1,'A',124);
+INSERT INTO `dhx_header` VALUES ('1',1,'A',124),('1',5,'E',96),('1',6,'F',103),('1',7,'G',83),('1',8,'H',93),('1',2,'B',64),('1',3,'C',64),('1',4,'D',64);
 /*!40000 ALTER TABLE `dhx_header` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -238,7 +238,7 @@ CREATE TABLE `dhx_triggers` (
   `trigger` varchar(10) DEFAULT NULL,
   `source` varchar(10) DEFAULT NULL,
   UNIQUE KEY `id` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -247,6 +247,7 @@ CREATE TABLE `dhx_triggers` (
 
 LOCK TABLES `dhx_triggers` WRITE;
 /*!40000 ALTER TABLE `dhx_triggers` DISABLE KEYS */;
+INSERT INTO `dhx_triggers` VALUES (6,'1','D2','E2'),(5,'1','C2','E2'),(4,'1','B2','E2');
 /*!40000 ALTER TABLE `dhx_triggers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -370,7 +371,7 @@ CREATE TABLE `gradebreakdown` (
   CONSTRAINT `gradebreakdown_ibfk_5` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `gradebreakdown_ibfk_6` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `gradebreakdown_ibfk_7` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=851 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=841 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -617,7 +618,7 @@ CREATE TABLE `section` (
 
 LOCK TABLES `section` WRITE;
 /*!40000 ALTER TABLE `section` DISABLE KEYS */;
-INSERT INTO `section` VALUES (2,'S14101334',1),(2,'S14103150',1),(2,'S17040995',1),(2,'S17042227',1),(3,'S14101334',1),(3,'S14103150',1),(3,'S17040995',1),(3,'S17042227',1);
+INSERT INTO `section` VALUES (2,'S14101334',1),(2,'S14103150',1),(2,'S17040995',1),(2,'S17042227',1),(3,'S14101334',1),(3,'S14103150',1),(3,'S17040995',1),(3,'S17042227',1),(45,'S17042638',1),(45,'S17042976',1),(45,'S17043653',1),(45,'S17043663',1),(45,'S17045377',1),(45,'S17047982',1),(45,'S17048755',1),(45,'S17048824',1),(46,'S17042638',1),(46,'S17042976',1),(46,'S17043653',1),(46,'S17043663',1),(46,'S17045377',1),(46,'S17047982',1),(46,'S17048755',1),(46,'S17048824',1);
 /*!40000 ALTER TABLE `section` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -654,7 +655,7 @@ CREATE TABLE `student` (
 
 LOCK TABLES `student` WRITE;
 /*!40000 ALTER TABLE `student` DISABLE KEYS */;
-INSERT INTO `student` VALUES ('S14101334','123','Jean','','Go','Bravery',10,'Makati, Manila','Female','2000-03-16',1,'img/profile/favicon.png',1),('S14103150','helloworld','Master Rexes','John Rexes','Murro','Bravery',10,'Lapu-lapu Street','Male','1995-05-04',1,'img/profile/14101334.jpg',1),('S17040995','123','Johnny','','Hello','Bravery',10,'The World','Male','0004-02-05',1,NULL,1),('S17042227','123','Felix','George','Kjellberg','Bravery',10,'The World','Female','1994-04-04',1,NULL,1),('S17042638','123','Hello','Yeah','Joe',NULL,5,'Places','Male','1998-10-12',NULL,NULL,1),('S17042976','123','Fretzel','Eve','Sanchez',NULL,5,'Banana','Female','1995-05-05',NULL,'img/profile/IDPIC.jpg',1),('S17043653','123','Basch von','','Ronsenburg',NULL,5,'Dalmasca','Male','2000-05-05',NULL,NULL,1),('S17043663','123','Alexandar','','Hamilton',NULL,5,'USA','Male','1995-05-05',NULL,'img/profile/14101334.jpg',1),('S17045377','123','Rex','Carlo','Kabanilla',NULL,5,'SRP','Male','1998-07-10',NULL,NULL,1),('S17047982','123','Max','Delante','Zuorba',NULL,5,'Nasipit, Talamban, Cebu','Male','2004-05-05',NULL,'img/profile/17580034_774428689399246_669402885_n.png',1),('S17048755','123','Hello','','Kitty',NULL,5,'Germany','Male','1996-05-05',NULL,NULL,1),('S17048824','123','George','Washington','Bush',NULL,5,'Washington','Male','1995-05-05',NULL,NULL,1);
+INSERT INTO `student` VALUES ('S14101334','123','Jean','','Go','Bravery',10,'Makati, Manila','Female','2000-03-16',1,'img/profile/favicon.png',1),('S14103150','helloworld','Master Rexes','John Rexes','Murro','Bravery',10,'Lapu-lapu Street','Male','1995-05-04',1,'img/profile/14101334.jpg',1),('S17040995','123','Johnny','','Hello','Bravery',10,'The World','Male','0004-02-05',1,NULL,1),('S17042227','123','Felix','George','Kjellberg','Bravery',10,'The World','Female','1994-04-04',1,NULL,1),('S17042638','123','Hello','Yeah','Joe','Integrity',5,'Places','Male','1998-10-12',3,NULL,1),('S17042976','123','Fretzel','Eve','Sanchez','Integrity',5,'Banana','Female','1995-05-05',3,'img/profile/IDPIC.jpg',1),('S17043653','123','Basch von','','Ronsenburg','Integrity',5,'Dalmasca','Male','2000-05-05',3,NULL,1),('S17043663','123','Alexandar','','Hamilton','Integrity',5,'USA','Male','1995-05-05',3,'img/profile/14101334.jpg',1),('S17045377','123','Rex','Carlo','Kabanilla','Integrity',5,'SRP','Male','1998-07-10',3,NULL,1),('S17047114','123','June','July','Jake',NULL,3,'Cebu','Male','2000-05-05',NULL,NULL,1),('S17047982','123','Max','Delante','Zuorba','Integrity',5,'Nasipit, Talamban, Cebu','Male','2004-05-05',3,'img/profile/17580034_774428689399246_669402885_n.png',1),('S17048755','123','Hello','','Kitty','Integrity',5,'Germany','Male','1996-05-05',3,NULL,1),('S17048824','123','George','Washington','Bush','Integrity',5,'Washington','Male','1995-05-05',3,NULL,1);
 /*!40000 ALTER TABLE `student` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -670,7 +671,7 @@ CREATE TABLE `subjects` (
   `subject` varchar(32) NOT NULL,
   `active` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`subj_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -743,7 +744,7 @@ CREATE TABLE `teacher` (
 
 LOCK TABLES `teacher` WRITE;
 /*!40000 ALTER TABLE `teacher` DISABLE KEYS */;
-INSERT INTO `teacher` VALUES ('T14103150','123','Louie','Jay','Rivas','Lapu-Lapu Mountains','helllojay@gmail.com','1993-06-06','img/profile/14101268.jpg','High School',1),('T17041279','123','Joshua','Oh Canada','Velasco','Near Sunny Hills, Talamban','jvsimpson@lookout.com','1985-01-01','img/profile/13200027.jpg','Doctorate',1),('T17043224','123','John','','Hopkins','Lapu-lapu','jopkins@yahoo.com','1989-02-25',NULL,'Bachelor',1);
+INSERT INTO `teacher` VALUES ('T14103150','123','Louie','Jay','Rivas','Lapu-Lapu Mountains','helllojay@gmail.com','1993-06-06','img/profile/14101268.jpg','High School',1),('T17040895','123','Cid','','Dela Cruz','Mountain Province','mountain@outlook.com','2000-05-05',NULL,'Bachelor',1),('T17041279','123','Joshua','Oh Canada','Velasco','Near Sunny Hills, Talamban','jvsimpson@lookout.com','1985-01-01','img/profile/13200027.jpg','Doctorate',1),('T17043224','123','John','','Hopkins','Lapu-lapu','jopkins@yahoo.com','1989-02-25',NULL,'Bachelor',1),('T17045821','123','Cid','','Dela Cruz','Mountain Province','mountain@outlook.com','2000-05-05',NULL,'Bachelor',1);
 /*!40000 ALTER TABLE `teacher` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -850,4 +851,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-04-27 21:34:35
+-- Dump completed on 2017-04-28 20:02:20

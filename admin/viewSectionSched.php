@@ -69,8 +69,10 @@ if($cnt != 0) {
         array_splice($availDays, ($i/3), 1);
         array_splice($avail, $i - 1, 3);
         $cnt -= 3;
-      } else {
+      } else if($availDays[$i/3] < $sectionDays[$j/3]) {
         $i += 3;
+      } else if($availDays[$i/3] > $sectionnDays[$j/3]) {
+        $j += 3;
       }
     }
 
@@ -81,12 +83,15 @@ if($cnt != 0) {
   }
 }
 
+
+// Check for # of Students Enrolled //
 $classesT=mysqli_query($mysqli, "SELECT * FROM class WHERE sec_id = ".$id." AND active = 1");
 
 $classArray = array();
 while($classes=mysqli_fetch_array($classesT)) {
   array_push($classArray, $classes[0]);
 }
+
 
 $studNum=count($classArray);
 
@@ -144,6 +149,11 @@ if($studNum != 0) {
               <input type="hidden" name="sec_id" value="<?php echo $id; ?>" required>
               <input type="hidden" name="sched_id" value="" required>
               <input type="hidden" name="id" value="" required>
+            </form>
+
+            <form action="removeTeacher.php" method="POST">
+              <input type="hidden" name="sec_id" value="<?php echo $id; ?>" required>
+              <input type="hidden" name="sched_id" value="" required>
             </form>
 
             <?php
@@ -217,6 +227,15 @@ if($studNum != 0) {
                             <i class='icon-people'></i> Change Teacher
                           </button>
                         </a>";
+
+                      if($studNum == 0) {
+                        echo "
+                        <a href='javascript: removeTeacher(".$sched[0].")'>
+                          <button class='btn btn-sm btn-danger'>
+                            <i class='icon-user-unfollow'></i> Remove Teacher
+                          </button>
+                        </a>";
+                      }
                     }
                      
                    echo "</center>
@@ -354,10 +373,16 @@ if($studNum != 0) {
       document.forms[1].submit();
     }
 
+    function removeTeacher(sched_id)
+    {
+      document.forms[2].sched_id.value = sched_id;
+      document.forms[2].submit();
+    }
+
     function addForm(id)
     {
-      document.forms[2].id.value = id;
-      document.forms[2].submit();
+      document.forms[3].id.value = id;
+      document.forms[3].submit();
     }
   </script>
 

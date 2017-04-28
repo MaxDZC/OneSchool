@@ -58,6 +58,7 @@ $table=mysqli_query($mysqli,"SELECT * FROM student WHERE active = 1 ORDER BY stu
                   <th>ID Number</th>
                   <th>Student Name</th>
                   <th>Current Grade Level</th>
+                  <th>Section</th>
                   <th>Action</th>
                 </thead>
                 <tbody>
@@ -69,6 +70,12 @@ $table=mysqli_query($mysqli,"SELECT * FROM student WHERE active = 1 ORDER BY stu
                       <td>".$row[0]."</td>
                       <td>".$name."</td>
                       <td><center>".$row[6]."</center></td>
+                      <td>";
+
+                    if($row[5]) { echo $row[5]; } else { echo "Sectionless"; }
+
+                    echo
+                    "</td>
                       <td>
                         <center>
                           <a href='javascript: editStud(\"".$row[0]."\")'>

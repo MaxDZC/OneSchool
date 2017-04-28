@@ -92,7 +92,6 @@ $teacherList = mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName, teacher_
                         array_push($classArray, $class[0]);
                       }
 
-
                       $answer=implode(", ", $classArray);
                       $num = count($classArray);
 
@@ -121,11 +120,14 @@ $teacherList = mysqli_query($mysqli, "SELECT t_fName, t_mName, t_lName, teacher_
                           </a>
                           <a href='javascript: editForm(".$row[0].")'>
                             <button type='submit' class='btn btn-sm btn-success'><i class='fa fa-pencil'></i> Edit Section</button>
-                          </a> 
-                          <a href='javascript: delForm(".$row[0].")'>
+                          </a>";
+
+                    if($num == 0) {
+                      echo "<a href='javascript: delForm(".$row[0].")'>
                             <button class='btn btn-sm btn-danger'><i class='icon-minus'></i> Delete</button>
-                          </a>
-                        </center>
+                          </a>";
+                    }
+                    echo "</center>
                       </td>
                     </tr>";
                   }

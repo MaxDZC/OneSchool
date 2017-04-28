@@ -46,6 +46,10 @@ $teacherT=mysqli_query($mysqli, "SELECT * FROM teacher WHERE active = 1");
 
           <div class="card-block">
 
+            <form action="viewTeach.php" method="POST">
+              <input type="hidden" name="id" value="" required>
+            </form>
+
             <form action="delTeach.php" method="POST">
               <input type="hidden" name="id" value="" required>
             </form>
@@ -70,6 +74,11 @@ $teacherT=mysqli_query($mysqli, "SELECT * FROM teacher WHERE active = 1");
                       <td>".$name."</td>
                       <td>
                         <center>
+                          <a href='javascript: viewTeach(\"".$row[0]."\")'>
+                            <button class='btn btn-sm btn-success'>
+                              <i class='icon-pencil'></i> View Schedule
+                            </button>
+                          </a>
                           <a href='javascript: editTeach(\"".$row[0]."\")'>
                             <button class='btn btn-sm btn-warning'>
                               <i class='icon-pencil'></i> Edit
@@ -192,16 +201,22 @@ $teacherT=mysqli_query($mysqli, "SELECT * FROM teacher WHERE active = 1");
   <script src="../js/app.js"></script>
 
   <script>
-    function delTeach(id)
+    function viewTeach(id)
     {
       document.forms[0].id.value = id;
       document.forms[0].submit();
     }
 
-    function editTeach(id)
+    function delTeach(id)
     {
       document.forms[1].id.value = id;
       document.forms[1].submit();
+    }
+
+    function editTeach(id)
+    {
+      document.forms[2].id.value = id;
+      document.forms[2].submit();
     }
   </script>
 
